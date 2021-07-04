@@ -1,6 +1,13 @@
+# Security
 auth.json
+
+# Workspace
 server-status-monitor.code-workspace
 .eslintrc.json
-node_modules/
 .vscode/
+
+# Dependencies
+node_modules/
+
+# Miscellaneous
 *.ignore
