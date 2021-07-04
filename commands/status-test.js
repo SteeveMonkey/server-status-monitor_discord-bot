@@ -4,6 +4,7 @@ module.exports = {
 	name: 'status-test',
 	description: 'Displays the status of a harcoded server',
 	args: false,
+	// eslint-disable-next-line no-unused-vars
 	execute(message, args) {
 		const serverData = {
 			type: 'minecraft',
