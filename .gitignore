@@ -1,0 +1,6 @@
+auth.json
+server-status-monitor.code-workspace
+.eslintrc.json
+node_modules/
+.vscode/
+*.ignore
