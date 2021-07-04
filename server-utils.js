@@ -3,8 +3,8 @@ const { prefix } = require('../config.json');
 module.exports = {
 	// Display server status
 	displayStatus(message, serverData) {
-		const server = message.client.serverTypes.get(serverData.type)
-			|| message.client.serverTypes.find(serverType => serverType.aliases && serverType.aliases.includes(serverData.type));
+		const server = message.client.pingTypes.get(serverData.type)
+			|| message.client.pingTypes.find(serverType => serverType.aliases && serverType.aliases.includes(serverData.type));
 
 		server.ping(serverData, function(pingData) {
 			const statusEmbed = server.startEmbed(serverData, pingData);
@@ -15,8 +15,8 @@ module.exports = {
 
 	// Create updatable server status embed
 	createStatusEmbed(message, serverData) {
-		const server = message.client.serverTypes.get(serverData.type)
-			|| message.client.serverTypes.find(serverType => serverType.aliases && serverType.aliases.includes(serverData.type));
+		const server = message.client.pingTypes.get(serverData.type)
+			|| message.client.pingTypes.find(serverType => serverType.aliases && serverType.aliases.includes(serverData.type));
 
 		server.ping(serverData, function(pingData) {
 			const statusEmbed = server.startEmbed(serverData, pingData);
@@ -32,8 +32,8 @@ module.exports = {
 
 	// Update information in server status embed
 	updateStatusEmbed(message, serverData) {
-		const server = message.client.serverTypes.get(serverData.type)
-			|| message.client.serverTypes.find(serverType => serverType.aliases && serverType.aliases.includes(serverData.type));
+		const server = message.client.pingTypes.get(serverData.type)
+			|| message.client.pingTypes.find(serverType => serverType.aliases && serverType.aliases.includes(serverData.type));
 
 		server.ping(serverData, function(pingData) {
 			const statusEmbed = server.startEmbed(serverData, pingData);
@@ -53,7 +53,7 @@ module.exports = {
 	// Display list of supported server ping types in DMs
 	displayPingTypes(message) {
 		let reply = 'Here\'s a list of all my compatible server ping types:';
-		message.serverTypes.forEach(serverType => {
+		message.client.pingTypes.forEach(serverType => {
 			reply += `**${serverType.name}** \u2014 ${serverType.description}`;
 		});
 		reply += `\n\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`;

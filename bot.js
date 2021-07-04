@@ -5,11 +5,11 @@ const { prefix } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-client.serverTypes = new Discord.Collection();
+client.pingTypes = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-const serverTypeFiles = fs.readdirSync('./server_type').filter(file => file.endsWith('.js'));
+const serverTypeFiles = fs.readdirSync('./ping_type').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
@@ -17,8 +17,8 @@ for (const file of commandFiles) {
 }
 
 for (const file of serverTypeFiles) {
-	const serverType = require(`./server_type/${file}`);
-	client.serverTypes.set(serverType.name.toLowerCase(), serverType);
+	const serverType = require(`./ping_type/${file}`);
+	client.pingTypes.set(serverType.name.toLowerCase(), serverType);
 }
 
 // Start
