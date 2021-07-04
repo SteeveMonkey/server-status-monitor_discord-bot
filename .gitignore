@@ -9,5 +9,8 @@ server-status-monitor.code-workspace
 # Dependencies
 node_modules/
 
+# App Storage
+guilds/
+
 # Miscellaneous
 *.ignore
