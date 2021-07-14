@@ -1,4 +1,4 @@
-const { prefix } = require('../config.json');
+const { prefix } = require('./config.json');
 
 module.exports = {
 	// Display server status
@@ -54,7 +54,7 @@ module.exports = {
 	displayPingTypes(message) {
 		let reply = 'Here\'s a list of all my compatible server ping types:';
 		message.client.pingTypes.forEach(serverType => {
-			reply += `**${serverType.name}** \u2014 ${serverType.description}`;
+			reply += `\n**${serverType.name}** \u2014 ${serverType.description}`;
 		});
 		reply += `\n\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`;
 
