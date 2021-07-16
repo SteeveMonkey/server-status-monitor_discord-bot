@@ -14,6 +14,7 @@ module.exports = {
 			javaPort: null,
 		};
 
+		// Handle args
 		if (args[0] == undefined) {
 			message.channel.send(`You must provide the server ping type and address, ${message.author}!\n`
 				+ `The proper usage would be: \`${prefix}${this.name} ${this.usage}\``);
@@ -38,6 +39,7 @@ module.exports = {
 			serverData.javaPort = args[2];
 		}
 
+		// Display status
 		ServerUtils.displayStatus(message, serverData);
 	},
 };
