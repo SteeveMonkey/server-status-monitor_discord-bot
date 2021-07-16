@@ -10,8 +10,8 @@ module.exports = {
 		const serverData = {
 			type: null,
 
-			javaAddress: null,
-			javaPort: null,
+			address: null,
+			port: null,
 		};
 
 		// Handle args
@@ -32,11 +32,11 @@ module.exports = {
 			return;
 		}
 		else {
-			serverData.javaAddress = args[1];
+			serverData.address = args[1];
 		}
 
 		if (args[2] !== undefined) {
-			serverData.javaPort = args[2];
+			serverData.port = args[2];
 		}
 
 		// Display status
