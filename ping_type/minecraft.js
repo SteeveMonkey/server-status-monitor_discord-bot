@@ -6,9 +6,9 @@ module.exports = {
 	description: 'Used for Minecraft Java Edition servers and can display adidional Bedrock Edition info',
 
 	ping(serverData, pingFinished) {
-		let path = `/server/status?ip=${serverData.javaAddress}`;
-		if (serverData.javaPort) {
-			path += `&port=${serverData.javaPort}`;
+		let path = `/server/status?ip=${serverData.address}`;
+		if (serverData.port) {
+			path += `&port=${serverData.port}`;
 		}
 
 		const pingOptions = {
@@ -49,9 +49,9 @@ module.exports = {
 			statusEmbed.setTitle(serverData.name);
 		}
 		else {
-			let address = `${serverData.javaAddress}`;
-			if (serverData.javaPort) {
-				address += `:${serverData.javaPort}`;
+			let address = `${serverData.address}`;
+			if (serverData.port) {
+				address += `:${serverData.port}`;
 			}
 			statusEmbed.setTitle(address);
 		}
@@ -79,8 +79,8 @@ module.exports = {
 		// Java Edition Field
 		if (serverData.java) {
 			let address = `${serverData.javaAddress}`;
-			if (serverData.javaPort) {
-				address += `:${serverData.javaPort}`;
+			if (serverData.port) {
+				address += `:${serverData.port}`;
 			}
 
 			let version;
