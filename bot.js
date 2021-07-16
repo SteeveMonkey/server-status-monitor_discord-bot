@@ -63,6 +63,22 @@ client.on('message', message => {
 		setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 	}
 
+	if (message.channel.type !== 'dm') {
+		try {
+			const permissions = message.guild.me.permissionsIn(message.channel);
+
+			// message.author.send(`My permissions in the \`${message.channel.name}\` channel on \`${message.guild.name}\` are as follows\n\`\`\`${permissions.serialize()}\`\`\``);
+
+			if (!permissions.has('SEND_MESSAGES')) {
+				message.author.send(`I am unable to send a message in the \`${message.channel.name}\` channel on \`${message.guild.name}\`\nPlease make sure I have permission to send messages in that channel`);
+				return;
+			}
+		}
+		catch (error) {
+			console.error(error);
+			message.author.send(`There was an error trying to determine permissions: \`${error.name}\` \`\`\`\n${error.message}\`\`\``);
+		}
+	}
 
 	try {
 		command.execute(message, args);
