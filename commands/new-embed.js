@@ -35,7 +35,7 @@ module.exports = {
 			return;
 		}
 		else {
-			serverData.type = args[0].toLowerCase();
+			serverData.type = args[1].toLowerCase();
 		}
 
 		if (args[2] == undefined) {
@@ -44,11 +44,11 @@ module.exports = {
 			return;
 		}
 		else {
-			serverData.address = args[1];
+			serverData.address = args[2];
 		}
 
 		if (args[3] !== undefined) {
-			serverData.port = args[2];
+			serverData.port = args[3];
 		}
 
 		// Create self-updating server status embed
