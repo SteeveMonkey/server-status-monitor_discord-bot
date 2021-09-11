@@ -1,0 +1,89 @@
+module.exports = LoopedList;
+
+class Node {
+	constructor(data, next = null, previous = null) {
+		this.data = data;
+		this.next = next;
+		this.previous = previous;
+	}
+
+	setNext(node) {
+		this.next = node;
+	}
+
+	setPrevious(node) {
+		this.previous = node;
+	}
+}
+
+class LoopedList {
+	constructor() {
+		this.length = 0;
+	}
+
+	add(data) {
+		if (this.length == 0) {
+			this.node = new Node(data, this.node, this.node);
+		}
+		else {
+			this.node.previous.next = new Node(data, this.node, this.node.previous);
+			this.node.previous = this.node.previous.next;
+		}
+
+		this.length++;
+	}
+
+	get() {
+		if (this.length == 0) {
+			return null;
+		}
+		else {
+			this.node = this.node.next;
+			return this.node.previous;
+		}
+	}
+
+	peek() {
+		if (this.length == 0) {
+			return null;
+		}
+		else {
+			return this.node;
+		}
+	}
+
+	removeNode() {
+		detachNode(this.node);
+		this.node = this.node.next;
+		this.length--;
+	}
+
+	/*
+	removeNodeAt(relativeIndex) {
+		let node = this.node;
+
+		if (relativeIndex < 0) {
+			for (let i = 0; i > relativeIndex; i--) {
+				node = node.previous;
+			}
+		}
+		else {
+			for (let i = 0; i < relativeIndex; i++) {
+				node = node.next;
+			}
+		}
+
+		deleteNode(node);
+		this.length--;
+	}
+	*/
+
+	size() {
+		return this.length;
+	}
+}
+
+function detachNode(node) {
+	node.previous.next = node.next;
+	node.next.previous = node.previous;
+}
