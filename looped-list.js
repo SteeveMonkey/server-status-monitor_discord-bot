@@ -34,6 +34,10 @@ class LoopedList {
 	}
 
 	get() {
+		return this.getNode().data;
+	}
+
+	getNode() {
 		if (this.length == 0) {
 			return null;
 		}
@@ -44,6 +48,10 @@ class LoopedList {
 	}
 
 	peek() {
+		return this.peekNode().data;
+	}
+
+	peekNode() {
 		if (this.length == 0) {
 			return null;
 		}
