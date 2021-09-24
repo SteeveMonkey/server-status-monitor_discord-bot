@@ -66,26 +66,6 @@ class LoopedList {
 		this.length--;
 	}
 
-	/*
-	removeNodeAt(relativeIndex) {
-		let node = this.node;
-
-		if (relativeIndex < 0) {
-			for (let i = 0; i > relativeIndex; i--) {
-				node = node.previous;
-			}
-		}
-		else {
-			for (let i = 0; i < relativeIndex; i++) {
-				node = node.next;
-			}
-		}
-
-		deleteNode(node);
-		this.length--;
-	}
-	*/
-
 	size() {
 		return this.length;
 	}
