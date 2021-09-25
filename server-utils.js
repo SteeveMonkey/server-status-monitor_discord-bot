@@ -35,13 +35,30 @@ module.exports = {
 			statusEmbed.setTimestamp()
 				.setFooter('Last updated');
 
-			message.channel.send(statusEmbed);
+			message.channel.send(statusEmbed).then(sentMessage => {
+				// Save embed for later editing
+				const embedPath = getEmbedPath(sentMessage, embedId);
+				let embedData;
 
-			// TODO: Save message object for later editing
+				if (fs.existsSync(embedPath)) {
+					embedData = require(embedPath);
+				}
+				else {
+					embedData = {};
+				}
+
+				embedData.id = embedId;
+				embedData.messageId = sentMessage.id;
+				embedData.data = serverData;
+
+				fs.writeFileSync(embedPath, embedData);
+
+				// TODO: Create entry in ping list
+			});
 		});
 	},
 
-	// Update information in server status embed
+	// Update information in self-updating server status embed
 	updateStatusEmbed(message, serverData) {
 		const server = getServer(message.client.pingTypes, serverData.type);
 
@@ -52,12 +69,16 @@ module.exports = {
 				.setFooter('Last updated');
 
 			message.edit(statusEmbed);
+
+			// TODO: Modify corresponding entry in ping list
 		});
 	},
 
-	// Delete server status embed
+	// Delete self-updating server status embed
 	deleteStatusEmbed(message) {
 		message.delete();
+
+		// TODO: Remove corresponding entry from ping list
 	},
 
 	// Display list of supported server ping types in DMs
