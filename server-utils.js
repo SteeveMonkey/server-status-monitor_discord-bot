@@ -26,7 +26,7 @@ module.exports = {
 	},
 
 	// Create self-updating server status embed
-	createStatusEmbed(message, serverData) {
+	createStatusEmbed(message, embedId, serverData) {
 		const server = getServer(message.client.pingTypes, serverData.type);
 
 		server.ping(serverData, function(pingData) {

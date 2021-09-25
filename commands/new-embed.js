@@ -8,8 +8,8 @@ module.exports = {
 	args: true,
 	usage: '<embed id> <server type> <address> [port]',
 	execute(message, args) {
+		let embedId = null;
 		const serverData = {
-			embedId: null,
 			type: null,
 
 			address: null,
@@ -23,7 +23,7 @@ module.exports = {
 			return;
 		}
 		else {
-			serverData.embedId = args[0];
+			embedId = args[0];
 		}
 
 		if (args[1] == undefined) {
@@ -52,6 +52,6 @@ module.exports = {
 		}
 
 		// Create self-updating server status embed
-		ServerUtils.createStatusEmbed(message, serverData);
+		ServerUtils.createStatusEmbed(message, embedId, serverData);
 	},
 };
