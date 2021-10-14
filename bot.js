@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const auth = require('./auth.json');
 const { prefix } = require('./config.json');
 
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS] });
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
 client.commands = new Discord.Collection();
 client.pingTypes = new Discord.Collection();
 const cooldowns = new Discord.Collection();
