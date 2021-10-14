@@ -19,9 +19,10 @@ module.exports = {
 		const server = getServer(message.client.pingTypes, serverData.type);
 
 		server.ping(serverData, function(pingData) {
-			const statusEmbed = server.startEmbed(serverData, pingData);
+			const fileArray = [];
+			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-			message.channel.send(statusEmbed);
+			message.channel.send({ embeds: [statusEmbed], files: fileArray });
 		});
 	},
 
@@ -30,12 +31,13 @@ module.exports = {
 		const server = getServer(message.client.pingTypes, serverData.type);
 
 		server.ping(serverData, function(pingData) {
-			const statusEmbed = server.startEmbed(serverData, pingData);
+			const fileArray = [];
+			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
 			statusEmbed.setTimestamp()
 				.setFooter('Last updated');
 
-			message.channel.send(statusEmbed).then(sentMessage => {
+			message.channel.send({ embeds: [statusEmbed], files: fileArray }).then(sentMessage => {
 				// Save embed for later editing
 				const embedPath = getEmbedPath(sentMessage, embedId);
 				let embedData;

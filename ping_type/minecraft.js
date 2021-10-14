@@ -36,7 +36,7 @@ module.exports = {
 		pingRequest.end();
 	},
 
-	startEmbed(serverData, pingData) {
+	startEmbed(serverData, pingData, files) {
 		const statusEmbed = new Discord.MessageEmbed();
 
 		// Server Type
@@ -129,8 +129,8 @@ module.exports = {
 			const buf = new Buffer.from(data, 'base64');
 			const file = new Discord.MessageAttachment(buf, 'server-icon.png');
 
-			statusEmbed.attachFiles(file)
-				.setThumbnail('attachment://server-icon.png');
+			files.push(file);
+			statusEmbed.setThumbnail('attachment://server-icon.png');
 		}
 		else if (serverData.icon) {
 			statusEmbed.setThumbnail(serverData.icon);
