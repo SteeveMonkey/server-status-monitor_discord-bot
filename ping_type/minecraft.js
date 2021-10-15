@@ -3,7 +3,8 @@ const https = require('https');
 
 module.exports = {
 	name: 'Minecraft',
-	description: 'Used for Minecraft Java Edition servers and can display adidional Bedrock Edition info',
+	value: 'minecraft',
+	description: 'Used for Minecraft Java Edition servers and can display additional Bedrock Edition info',
 
 	ping(serverData, pingFinished) {
 		let path = `/server/status?ip=${serverData.address}`;
