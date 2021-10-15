@@ -108,7 +108,10 @@
   "description": "Discord bot that pings servers and displays the status of each in an embed message",
   "main": "bot.js",
   "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
     "body-parser": "^1.19.0",
+    "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
     "eris": "^0.13.1",
     "express": "^4.17.1"
