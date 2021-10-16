@@ -2,32 +2,27 @@ const fs = require('fs');
 const { prefix } = require('./config.json');
 
 
-// Returns server object of specified server type
-function getServer(client, serverType) {
-	return client.pingTypes.get(serverType);
-}
-
 // Returns path to self-updating server status embed
 function getEmbedPath(message, embedId) {
 	return `./guilds/${message.guild.id}/channels/${message.channel.id}/embeds/${embedId}.json`;
 }
 
 module.exports = {
-	// Display server status
-	displayStatus(message, serverData) {
-		const server = getServer(message.client.pingTypes, serverData.type);
+	// Passes server status as an embed message to the provided function
+	getStatusEmbed(client, serverData, EmbedCreated) {
+		const server = client.pingTypes.get(serverData.type);
 
 		server.ping(serverData, function(pingData) {
 			const fileArray = [];
 			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-			message.channel.send({ embeds: [statusEmbed], files: fileArray });
+			EmbedCreated(statusEmbed, fileArray);
 		});
 	},
 
 	// Create self-updating server status embed
 	createStatusEmbed(message, embedId, serverData) {
-		const server = getServer(message.client, serverData.type);
+		const server = message.client.pingTypes.get(serverData.type);
 
 		server.ping(serverData, function(pingData) {
 			const fileArray = [];
@@ -61,7 +56,7 @@ module.exports = {
 
 	// Update information in self-updating server status embed
 	updateStatusEmbed(message, serverData) {
-		const server = getServer(message.client, serverData.type);
+		const server = message.client.pingTypes.get(serverData.type);
 
 		server.ping(serverData, function(pingData) {
 			const statusEmbed = server.startEmbed(serverData, pingData);

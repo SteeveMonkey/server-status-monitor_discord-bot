@@ -1,12 +1,24 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const ServerUtils = require('../server-utils.js');
-const { prefix } = require('../config.json');
+const CommandUtils = require('../command-utils');
 
 module.exports = {
-	name: 'status',
-	description: 'Displays the status of a server',
-	args: true,
-	usage: '<server type> <address> [port]',
-	execute(message, args) {
+	data: new SlashCommandBuilder()
+		.setName('status')
+		.setDescription('Displays the status of the given server')
+		.addStringOption(CommandUtils.getPingTypesOption(
+			'server-type',
+			'Enter the type of server to ping',
+			true))
+		.addStringOption(option => option
+			.setName('address')
+			.setDescription('Enter the address used to reach the server')
+			.setRequired(true))
+		.addNumberOption(option => option
+			.setName('port')
+			.setDescription('Enter the port used to reach the server')),
+	execute(interaction) {
+		const options = interaction.options;
 		const serverData = {
 			type: null,
 
@@ -14,32 +26,16 @@ module.exports = {
 			port: null,
 		};
 
-		// Handle args
-		if (args[0] == undefined) {
-			message.channel.send(`You must provide the server ping type and address, ${message.author}!\n`
-				+ `The proper usage would be: \`${prefix}${this.name} ${this.usage}\``);
-
-			ServerUtils.displayPingTypes(message);
-
-			return;
-		}
-		else {
-			serverData.type = args[0].toLowerCase();
-		}
-
-		if (args[1] == undefined) {
-			message.channel.send(`You must provide the server address, ${message.author}!`);
-			return;
-		}
-		else {
-			serverData.address = args[1];
-		}
-
-		if (args[2] !== undefined) {
-			serverData.port = args[2];
+		// Handle options
+		serverData.type = options.getString('server-type');
+		serverData.address = options.getString('address');
+		if (options.getNumber('port') !== undefined) {
+			serverData.port = options.getNumber('port');
 		}
 
 		// Display status
-		ServerUtils.displayStatus(message, serverData);
+		ServerUtils.getStatusEmbed(interaction.client, serverData, function(statusEmbed, fileArray) {
+			interaction.reply({ embeds: [statusEmbed], files: fileArray });
+		});
 	},
 };
