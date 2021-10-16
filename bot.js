@@ -1,23 +1,11 @@
-const fs = require('fs');
 const Discord = require('discord.js');
 const auth = require('./auth.json');
+const CommandUtils = require('./command-utils');
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGES] });
-client.commands = new Discord.Collection();
-client.pingTypes = new Discord.Collection();
+client.commands = CommandUtils.getCommands();
+client.pingTypes = CommandUtils.getPingTypes();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-const serverTypeFiles = fs.readdirSync('./ping_type').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
-}
-
-for (const file of serverTypeFiles) {
-	const serverType = require(`./ping_type/${file}`);
-	client.pingTypes.set(serverType.name.toLowerCase(), serverType);
-}
 
 // Start
 client.once('ready', () => {
