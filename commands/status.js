@@ -35,7 +35,7 @@ module.exports = {
 
 		// Display status
 		ServerUtils.getStatusEmbed(interaction.client, serverData, function(statusEmbed, fileArray) {
-			interaction.reply({ embeds: [statusEmbed], files: fileArray });
+			interaction.reply({ embeds: [statusEmbed], files: fileArray, ephemeral: true });
 		});
 	},
 };

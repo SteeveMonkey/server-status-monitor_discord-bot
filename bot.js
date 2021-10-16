@@ -41,7 +41,7 @@ client.on('interactionCreate', async interaction => {
 	}
 	catch (error) {
 		console.error(error);
-		await interaction.reply(`There was an error trying to execute the \`${command.data.name}\` command: \`\`\`\n${error.message}\`\`\``);
+		await interaction.reply({ content: `There was an error trying to execute the \`${command.data.name}\` command: \`\`\`\n${error.message}\`\`\``, ephemeral: true });
 	}
 });
 
