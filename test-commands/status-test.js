@@ -1,11 +1,11 @@
-const ServerEntry = require('../server-utils.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const ServerUtils = require('../server-utils.js');
 
 module.exports = {
-	name: 'status-test',
-	description: 'Displays the status of a harcoded server',
-	args: false,
-	// eslint-disable-next-line no-unused-vars
-	execute(message, args) {
+	data: new SlashCommandBuilder()
+		.setName('status-test')
+		.setDescription('Displays the status of a harcoded server'),
+	execute(interaction) {
 		const serverData = {
 			type: 'minecraft',
 
@@ -27,6 +27,9 @@ module.exports = {
 			mapURL: 'http://example.com/',
 		};
 
-		ServerEntry.displayStatus(message, serverData);
+		// Display status
+		ServerUtils.getStatusEmbed(interaction.client, serverData, function(statusEmbed, fileArray) {
+			interaction.reply({ embeds: [statusEmbed], files: fileArray, ephemeral: true });
+		});
 	},
 };
