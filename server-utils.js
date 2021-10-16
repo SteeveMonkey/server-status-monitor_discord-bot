@@ -2,8 +2,8 @@ const fs = require('fs');
 
 
 // Returns path to self-updating server status embed
-function getEmbedPath(message, embedId) {
-	return `./guilds/${message.guild.id}/channels/${message.channel.id}/embeds/${embedId}.json`;
+function getEmbedPath(message) {
+	return `./guilds/${message.guild.id}/channels/${message.channel.id}/embeds`;
 }
 
 module.exports = {
@@ -20,8 +20,10 @@ module.exports = {
 	},
 
 	// Create self-updating server status embed
-	createStatusEmbed(message, embedId, serverData) {
-		const server = message.client.pingTypes.get(serverData.type);
+	createStatusEmbed(interaction, embedId, serverData) {
+		const server = interaction.client.pingTypes.get(serverData.type);
+
+		interaction.reply({ content: `Creating new self-updating status embed with the ID \`${embedId}\`...`, ephemeral: true });
 
 		server.ping(serverData, function(pingData) {
 			const fileArray = [];
@@ -30,10 +32,15 @@ module.exports = {
 			statusEmbed.setTimestamp()
 				.setFooter('Last updated');
 
-			message.channel.send({ embeds: [statusEmbed], files: fileArray }).then(sentMessage => {
+			interaction.channel.send({ embeds: [statusEmbed], files: fileArray }).then(sentMessage => {
 				// Save embed for later editing
-				const embedPath = getEmbedPath(sentMessage, embedId);
+				let embedPath = getEmbedPath(sentMessage);
 				let embedData;
+
+				if (!fs.existsSync(embedPath)) {
+					fs.mkdirSync(embedPath, { recursive: true });
+				}
+				embedPath += `/${embedId}.json`;
 
 				if (fs.existsSync(embedPath)) {
 					embedData = require(embedPath);
@@ -46,9 +53,11 @@ module.exports = {
 				embedData.messageId = sentMessage.id;
 				embedData.data = serverData;
 
-				fs.writeFileSync(embedPath, embedData);
+				fs.writeFileSync(embedPath, JSON.stringify(embedData));
 
 				// TODO: Create entry in ping list
+
+				interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
 			});
 		});
 	},

@@ -1,13 +1,28 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const ServerUtils = require('../server-utils.js');
-const { prefix } = require('../config.json');
+const CommandUtils = require('../command-utils');
 
 module.exports = {
-	name: 'new-embed',
-	aliases: ['add-embed', 'create-embed'],
-	description: 'Creates a new self-updating status message in the current channel',
-	args: true,
-	usage: '<embed id> <server type> <address> [port]',
-	execute(message, args) {
+	data: new SlashCommandBuilder()
+		.setName('new-embed')
+		.setDescription('Creates a new self-updating status message in the current channel')
+		.addStringOption(option => option
+			.setName('embed-id')
+			.setDescription('Create an ID to reference this status embed later')
+			.setRequired(true))
+		.addStringOption(CommandUtils.getPingTypesOption(
+			'server-type',
+			'Enter the type of server to ping',
+			true))
+		.addStringOption(option => option
+			.setName('address')
+			.setDescription('Enter the address used to reach the server')
+			.setRequired(true))
+		.addNumberOption(option => option
+			.setName('port')
+			.setDescription('Enter the port used to reach the server')),
+	execute(interaction) {
+		const options = interaction.options;
 		let embedId = null;
 		const serverData = {
 			type: null,
@@ -17,41 +32,15 @@ module.exports = {
 		};
 
 		// Handle args
-		if (args[0] == undefined) {
-			message.channel.send(`You must provide a new embed identifier, the server ping type, and the server address, ${message.author}!\n`
-			+ `The proper usage would be: \`${prefix}${this.name} ${this.usage}\``);
-			return;
-		}
-		else {
-			embedId = args[0];
-		}
-
-		if (args[1] == undefined) {
-			message.channel.send(`You must provide the server ping type and address, ${message.author}!\n`
-				+ `The proper usage would be: \`${prefix}${this.name} ${this.usage}\``);
-
-			ServerUtils.displayPingTypes(message);
-
-			return;
-		}
-		else {
-			serverData.type = args[1].toLowerCase();
-		}
-
-		if (args[2] == undefined) {
-			message.channel.send(`You must provide the server address, ${message.author}!`
-			+ `The proper usage would be: \`${prefix}${this.name} ${this.usage}\``);
-			return;
-		}
-		else {
-			serverData.address = args[2];
-		}
-
-		if (args[3] !== undefined) {
-			serverData.port = args[3];
+		// TODO: Check if provided embedId already exists before continuing
+		embedId = options.getString('embed-id');
+		serverData.type = options.getString('server-type');
+		serverData.address = options.getString('address');
+		if (options.getNumber('port') !== undefined) {
+			serverData.port = options.getNumber('port');
 		}
 
 		// Create self-updating server status embed
-		ServerUtils.createStatusEmbed(message, embedId, serverData);
+		ServerUtils.createStatusEmbed(interaction, embedId, serverData);
 	},
 };
