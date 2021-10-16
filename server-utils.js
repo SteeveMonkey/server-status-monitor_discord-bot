@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { prefix } = require('./config.json');
 
 
 // Returns path to self-updating server status embed
@@ -75,26 +74,5 @@ module.exports = {
 		message.delete();
 
 		// TODO: Remove corresponding entry from ping list
-	},
-
-	// Display list of supported server ping types in DMs
-	displayPingTypes(message) {
-		let reply = 'Here\'s a list of all my compatible server ping types:';
-		message.client.pingTypes.forEach(serverType => {
-			reply += `\n**${serverType.name}** \u2014 ${serverType.description}`;
-		});
-		reply += `\n\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`;
-
-		message.author.send(reply)
-			.then(() => {
-				if (message.channel.type === 'dm') {
-					return;
-				}
-				message.reply('I\'ve sent you a DM with all my supported server ping types.');
-			})
-			.catch((error) => {
-				console.error(`Could not send server ping list DM to ${message.author.tag}.\n`, error);
-				message.reply(`${message.author} It seems like I can't DM you! Do you have DMs disabled?`);
-			});
 	},
 };
