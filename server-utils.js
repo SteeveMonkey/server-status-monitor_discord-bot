@@ -1,4 +1,7 @@
 const fs = require('fs');
+const LoopedList = require('./looped-list');
+
+const embedDirectory = './embed-list';
 
 
 // Returns path to self-updating server status embed
@@ -7,6 +10,18 @@ function getEmbedPath(message) {
 }
 
 module.exports = {
+	// Return LoopedList of active embeds to regularly update
+	getPingList() {
+		const pingList = new LoopedList();
+		const embedFiles = fs.readdirSync(embedDirectory).filter(file => file.endsWith('.json'));
+
+		for (const file of embedFiles) {
+			pingList.add(file);
+		}
+
+		return pingList;
+	},
+
 	// Passes server status as an embed message to the provided function
 	getStatusEmbed(client, serverData, EmbedCreated) {
 		const server = client.pingTypes.get(serverData.type);
