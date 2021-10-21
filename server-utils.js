@@ -4,9 +4,9 @@ const LoopedList = require('./looped-list');
 const embedDirectory = './embed-list';
 
 
-// Returns path to self-updating server status embed
-function getEmbedPath(message) {
-	return `./guilds/${message.guild.id}/channels/${message.channel.id}/embeds`;
+// Returns file name of self-updating server status embed
+function getEmbedFile(message, embedId) {
+	return `${message.guild.id}-${message.channel.id}-${embedId}.json`;
 }
 
 module.exports = {
@@ -40,41 +40,42 @@ module.exports = {
 
 		interaction.reply({ content: `Creating new self-updating status embed with the ID \`${embedId}\`...`, ephemeral: true });
 
-		server.ping(serverData, function(pingData) {
-			const fileArray = [];
-			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+		try {
+			server.ping(serverData, function(pingData) {
+				const fileArray = [];
+				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-			statusEmbed.setTimestamp()
-				.setFooter('Last updated');
+				statusEmbed.setTimestamp()
+					.setFooter('Last updated');
 
-			interaction.channel.send({ embeds: [statusEmbed], files: fileArray }).then(sentMessage => {
+				interaction.channel.send({ embeds: [statusEmbed], files: fileArray }).then(sentMessage => {
 				// Save embed for later editing
-				let embedPath = getEmbedPath(sentMessage);
-				let embedData;
+					const embedFile = getEmbedFile(sentMessage, embedId);
+					const embedPath = `${embedDirectory}/${embedFile}`;
+					let embedData;
 
-				if (!fs.existsSync(embedPath)) {
-					fs.mkdirSync(embedPath, { recursive: true });
-				}
-				embedPath += `/${embedId}.json`;
+					if (fs.existsSync(embedPath)) {
+						embedData = JSON.parse(fs.readFileSync(embedPath));
+					}
+					else {
+						embedData = {};
+					}
 
-				if (fs.existsSync(embedPath)) {
-					embedData = require(embedPath);
-				}
-				else {
-					embedData = {};
-				}
+					embedData.id = embedId;
+					embedData.messageId = sentMessage.id;
+					embedData.server = serverData;
 
-				embedData.id = embedId;
-				embedData.messageId = sentMessage.id;
-				embedData.data = serverData;
+					fs.writeFileSync(embedPath, JSON.stringify(embedData));
 
-				fs.writeFileSync(embedPath, JSON.stringify(embedData));
+					interaction.client.pingList.add(embedFile);
 
-				// TODO: Create entry in ping list
-
-				interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
+					interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
+				});
 			});
-		});
+		}
+		catch (error) {
+			interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
+		}
 	},
 
 	// Update information in self-updating server status embed

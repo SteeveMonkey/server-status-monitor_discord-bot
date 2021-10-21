@@ -10,7 +10,7 @@ server-status-monitor.code-workspace
 node_modules/
 
 # App Storage
-guilds/
+embed-list/
 
 # Miscellaneous
 *.ignore
