@@ -1,5 +1,3 @@
-module.exports = LoopedList;
-
 class Node {
 	constructor(data, next = null, previous = null) {
 		this.data = data;
@@ -75,3 +73,5 @@ function detachNode(node) {
 	node.previous.next = node.next;
 	node.next.previous = node.previous;
 }
+
+module.exports = LoopedList;
