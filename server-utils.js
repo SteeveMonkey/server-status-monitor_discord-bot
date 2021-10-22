@@ -92,18 +92,32 @@ module.exports = {
 	},
 
 	// Update information in self-updating server status embed
-	updateStatusEmbed(message, serverData) {
-		const server = message.client.pingTypes.get(serverData.type);
+	updateStatusEmbed(client, embedFile) {
+		const embedData = JSON.parse(fs.readFileSync(`${embedDirectory}/${embedFile}`));
+		const serverData = embedData.serverData;
+		const server = client.pingTypes.get(serverData.type);
 
-		server.ping(serverData, function(pingData) {
-			const statusEmbed = server.startEmbed(serverData, pingData);
+		return new Promise((resolve, reject) => {
+			try {
+				server.ping(serverData, function(pingData) {
+					const fileArray = [];
+					const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-			statusEmbed.setTimestamp()
-				.setFooter('Last updated');
+					statusEmbed.setTimestamp()
+						.setFooter('Last updated');
 
-			message.edit(statusEmbed);
+					getEmbedMessage(client, embedData).then(message => {
+						message.edit({ embeds: [statusEmbed], files: fileArray }).then(() => {
+							fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
 
-			// TODO: Modify corresponding entry in ping list
+							resolve();
+						});
+					});
+				});
+			}
+			catch (error) {
+				reject(error);
+			}
 		});
 	},
 
