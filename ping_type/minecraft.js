@@ -29,7 +29,6 @@ module.exports = {
 
 			pingResponse.on('end', function() {
 				const buffer = Buffer.concat(chunks);
-				console.log(buffer.toString());
 				pingFinished(JSON.parse(buffer));
 			});
 		});
