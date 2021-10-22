@@ -41,6 +41,13 @@ module.exports = {
 		}
 
 		// Create self-updating server status embed
-		ServerUtils.createStatusEmbed(interaction, embedId, serverData);
+		interaction.reply({ content: `Creating new self-updating status embed with the ID \`${embedId}\`...`, ephemeral: true });
+		ServerUtils.createStatusEmbed(interaction.client, embedId, serverData, function sendEmbed(statusEmbed, fileArray) {
+			return interaction.channel.send({ embeds: [statusEmbed], files: fileArray });
+		}).then(() => {
+			interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
+		}).catch(error => {
+			interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
+		});
 	},
 };
