@@ -1,3 +1,4 @@
 {
-	"prefix": "/"
+	"prefix": "/",
+	"pingFrequency": 300000
 }

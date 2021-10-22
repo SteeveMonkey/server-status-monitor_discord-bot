@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const auth = require('./auth.json');
+const config = require('./config.json');
 const ServerUtils = require('./server-utils');
 const CommandUtils = require('./command-utils');
 
@@ -12,6 +13,7 @@ client.pingList = ServerUtils.getPingList();
 // Start
 client.once('ready', () => {
 	console.log('Ready!');
+	continuouslyUpdateStatusEmbeds();
 });
 
 // Command Handling
@@ -48,3 +50,15 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(auth.token);
+
+
+// Continuously updates all of the status embeds in pingList
+function continuouslyUpdateStatusEmbeds() {
+	// Schedule the next status embed update
+	setTimeout(() => {
+		continuouslyUpdateStatusEmbeds();
+	}, config.pingFrequency / client.pingList.size());
+
+	// Update the server status of the current Embed
+	ServerUtils.updateStatusEmbed(client, client.pingList.get());
+}
