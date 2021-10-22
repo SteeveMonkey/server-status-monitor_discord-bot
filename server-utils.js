@@ -9,6 +9,25 @@ function getEmbedFile(embedId, guildId, channelId) {
 	return `${guildId}-${channelId}-${embedId}.json`;
 }
 
+// Returns promise containing status embed message obtained from provided embed data
+function getEmbedMessage(client, embedData) {
+	return new Promise((resolve, reject) => {
+		client.guilds.fetch(embedData.guildId).then(guild => {
+			guild.channels.fetch(embedData.channelId).then(channel => {
+				channel.messages.fetch(embedData.messageId).then(message => {
+					resolve(message);
+				}).catch(error => {
+					reject(error);
+				});
+			}).catch(error => {
+				reject(error);
+			});
+		}).catch(error => {
+			reject(error);
+		});
+	});
+}
+
 module.exports = {
 	// Return LoopedList of active embeds to regularly update
 	getPingList() {
