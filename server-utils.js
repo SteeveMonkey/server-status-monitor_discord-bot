@@ -5,8 +5,8 @@ const embedDirectory = './embed-list';
 
 
 // Returns file name of self-updating server status embed
-function getEmbedFile(message, embedId) {
-	return `${message.guild.id}-${message.channel.id}-${embedId}.json`;
+function getEmbedFile(embedId, guildId, channelId) {
+	return `${guildId}-${channelId}-${embedId}.json`;
 }
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
 		});
 	},
 
-	// Create self-updating server status embed
+	// Passes self-updating server status embed to provided function
 	createStatusEmbed(client, embedId, serverData, sendEmbed) {
 		const server = client.pingTypes.get(serverData.type);
 
@@ -49,24 +49,16 @@ module.exports = {
 
 					sendEmbed(statusEmbed, fileArray).then(sentMessage => {
 					// Save embed for later editing
-						const embedFile = getEmbedFile(sentMessage, embedId);
-						const embedPath = `${embedDirectory}/${embedFile}`;
-						let embedData;
+						const embedFile = getEmbedFile(embedId, sentMessage.guild.id, sentMessage.channel.id);
+						const embedData = {
+							id: embedId,
+							guildId: sentMessage.guild.id,
+							channelId: sentMessage.channel.id,
+							messageId: sentMessage.id,
+							serverData: serverData,
+						};
 
-						if (fs.existsSync(embedPath)) {
-							embedData = JSON.parse(fs.readFileSync(embedPath));
-						}
-						else {
-							embedData = {};
-						}
-
-						embedData.id = embedId;
-						embedData.guildId = sentMessage.guild.id;
-						embedData.channelId = sentMessage.channel.id;
-						embedData.messageId = sentMessage.id;
-						embedData.server = serverData;
-
-						fs.writeFileSync(embedPath, JSON.stringify(embedData));
+						fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
 
 						client.pingList.add(embedFile);
 
