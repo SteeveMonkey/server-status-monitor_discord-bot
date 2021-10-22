@@ -61,6 +61,8 @@ module.exports = {
 						}
 
 						embedData.id = embedId;
+						embedData.guildId = sentMessage.guild.id;
+						embedData.channelId = sentMessage.channel.id;
 						embedData.messageId = sentMessage.id;
 						embedData.server = serverData;
 
