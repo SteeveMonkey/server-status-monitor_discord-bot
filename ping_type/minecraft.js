@@ -6,34 +6,41 @@ module.exports = {
 	value: 'minecraft',
 	description: 'Used for Minecraft Java Edition servers and can display additional Bedrock Edition info',
 
-	ping(serverData, pingFinished) {
-		let path = `/server/status?ip=${serverData.address}`;
-		if (serverData.port) {
-			path += `&port=${serverData.port}`;
-		}
+	ping(serverData) {
+		return new Promise((resolve, reject) => {
+			try {
+				let path = `/server/status?ip=${serverData.address}`;
+				if (serverData.port) {
+					path += `&port=${serverData.port}`;
+				}
 
-		const pingOptions = {
-			'method': 'GET',
-			'hostname': 'mcapi.us',
-			'port': null,
-			'path': path,
-			'headers': {},
-		};
+				const pingOptions = {
+					'method': 'GET',
+					'hostname': 'mcapi.us',
+					'port': null,
+					'path': path,
+					'headers': {},
+				};
 
-		const pingRequest = https.request(pingOptions, function(pingResponse) {
-			const chunks = [];
+				const pingRequest = https.request(pingOptions, function(pingResponse) {
+					const chunks = [];
 
-			pingResponse.on('data', function(chunk) {
-				chunks.push(chunk);
-			});
+					pingResponse.on('data', function(chunk) {
+						chunks.push(chunk);
+					});
 
-			pingResponse.on('end', function() {
-				const buffer = Buffer.concat(chunks);
-				pingFinished(JSON.parse(buffer));
-			});
+					pingResponse.on('end', function() {
+						const buffer = Buffer.concat(chunks);
+						resolve(JSON.parse(buffer));
+					});
+				});
+
+				pingRequest.end();
+			}
+			catch (error) {
+				reject(error);
+			}
 		});
-
-		pingRequest.end();
 	},
 
 	startEmbed(serverData, pingData, files) {

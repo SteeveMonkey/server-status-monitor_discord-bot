@@ -45,7 +45,7 @@ module.exports = {
 	getStatusEmbed(client, serverData, EmbedCreated) {
 		const server = client.pingTypes.get(serverData.type);
 
-		server.ping(serverData, function(pingData) {
+		server.ping(serverData).then(pingData => {
 			const fileArray = [];
 			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
@@ -59,7 +59,7 @@ module.exports = {
 
 		return new Promise((resolve, reject) => {
 			try {
-				server.ping(serverData, function(pingData) {
+				server.ping(serverData).then(pingData => {
 					const fileArray = [];
 					const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
@@ -99,7 +99,7 @@ module.exports = {
 
 		return new Promise((resolve, reject) => {
 			try {
-				server.ping(serverData, function(pingData) {
+				server.ping(serverData).then(pingData => {
 					const fileArray = [];
 					const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
