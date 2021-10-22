@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Discord = require('discord.js');
 const LoopedList = require('./looped-list');
 
 const embedDirectory = './embed-list';
@@ -39,6 +40,26 @@ module.exports = {
 		}
 
 		return pingList;
+	},
+
+	// Returns an object containing a Discord.MessageAttachment and it's internal reference URL from provided image URI
+	imageUriToAttachment(imageUri, imageName) {
+		let uriSplit = imageUri.split(',');
+		const data = uriSplit[1];
+		uriSplit = uriSplit[0].split(';');
+		const base = uriSplit[1];
+		uriSplit = uriSplit[0].split('/');
+		const imageFormat = uriSplit[1];
+
+		if (uriSplit[0] == 'data:image') {
+			return {
+				attachment: new Discord.MessageAttachment(new Buffer.from(data, base), `${imageName}.${imageFormat}`),
+				reference: `attachment://${imageName}.${imageFormat}`,
+			};
+		}
+		else {
+			throw new Error('Expected and image URI for the first argument');
+		}
 	},
 
 	// Passes server status as an embed message to the provided function
