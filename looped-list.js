@@ -21,7 +21,9 @@ class LoopedList {
 
 	add(data) {
 		if (this.length == 0) {
-			this.node = new Node(data, this.node, this.node);
+			this.node = new Node(data, null, null);
+			this.node.next = this.node;
+			this.node.previous = this.node;
 		}
 		else {
 			this.node.previous.next = new Node(data, this.node, this.node.previous);
