@@ -76,40 +76,43 @@ module.exports = {
 
 	// Passes self-updating server status embed to provided function
 	createStatusEmbed(client, embedId, serverData, sendEmbed) {
-		const server = client.pingTypes.get(serverData.type);
-
 		return new Promise((resolve, reject) => {
-			try {
-				server.ping(serverData).then(pingData => {
-					const fileArray = [];
-					const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
-					serverData.icon = statusEmbed.thumbnail.url;
+			const server = client.pingTypes.get(serverData.type);
 
-					statusEmbed.setTimestamp()
-						.setFooter('Last updated');
+			server.ping(serverData).then(pingData => {
+				const fileArray = [];
+				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+				serverData.icon = statusEmbed.thumbnail.url;
 
-					sendEmbed(statusEmbed, fileArray).then(sentMessage => {
+				statusEmbed.setTimestamp()
+					.setFooter('Last updated');
+
+				sendEmbed(statusEmbed, fileArray).then(sentMessage => {
 					// Save embed for later editing
-						const embedFile = getEmbedFile(embedId, sentMessage.guild.id, sentMessage.channel.id);
-						const embedData = {
-							id: embedId,
-							guildId: sentMessage.guild.id,
-							channelId: sentMessage.channel.id,
-							messageId: sentMessage.id,
-							serverData: serverData,
-						};
+					const embedFile = getEmbedFile(embedId, sentMessage.guild.id, sentMessage.channel.id);
+					const embedData = {
+						id: embedId,
+						guildId: sentMessage.guild.id,
+						channelId: sentMessage.channel.id,
+						messageId: sentMessage.id,
+						serverData: serverData,
+					};
 
+					try {
 						fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
+					}
+					catch (error) {
+						reject(error);
+					}
+					client.pingList.add(embedFile);
 
-						client.pingList.add(embedFile);
-
-						resolve();
-					});
+					resolve();
+				}).catch(error => {
+					reject(error);
 				});
-			}
-			catch(error) {
+			}).catch(error => {
 				reject(error);
-			}
+			});
 		});
 	},
 
