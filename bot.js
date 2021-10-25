@@ -13,6 +13,7 @@ client.pingList = ServerUtils.getPingList();
 // Start
 client.once('ready', () => {
 	console.log('Ready!');
+	console.log('Started updating status embeds');
 	continuouslyUpdateStatusEmbeds();
 });
 
