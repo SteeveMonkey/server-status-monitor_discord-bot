@@ -115,11 +115,18 @@ module.exports = {
 
 	// Update information in self-updating server status embed
 	updateStatusEmbed(client, embedFile) {
-		const embedData = JSON.parse(fs.readFileSync(`${embedDirectory}/${embedFile}`));
-		const serverData = embedData.serverData;
-		const server = client.pingTypes.get(serverData.type);
-
 		return new Promise((resolve, reject) => {
+			const embedPath = `${embedDirectory}/${embedFile}`;
+			let embedData;
+			try {
+				embedData = JSON.parse(fs.readFileSync(embedPath));
+			}
+			catch (error) {
+				reject(error);
+			}
+			const serverData = embedData.serverData;
+			const server = client.pingTypes.get(serverData.type);
+
 			server.ping(serverData).then(pingData => {
 				const fileArray = [];
 				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
@@ -129,9 +136,14 @@ module.exports = {
 
 				getEmbedMessage(client, embedData).then(message => {
 					message.edit({ embeds: [statusEmbed] }).then(() => {
-						fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
+						try {
+							fs.writeFileSync(embedPath, JSON.stringify(embedData));
+						}
+						catch (error) {
+							reject(error);
+						}
 
-						resolve();
+						resolve(`Successfully updated message from status embed \`${embedFile}\``);
 					}).catch(error => {
 						reject(error);
 					});

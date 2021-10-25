@@ -60,7 +60,9 @@ function continuouslyUpdateStatusEmbeds() {
 	}, config.pingInterval / client.pingList.size());
 
 	// Update the server status of the current Embed
-	ServerUtils.updateStatusEmbed(client, client.pingList.get()).catch(error => {
+	ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(logMessage => {
+		console.log(logMessage);
+	}).catch(error => {
 		console.log(error);
 	});
 }
