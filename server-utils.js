@@ -174,4 +174,9 @@ module.exports = {
 
 		// TODO: Remove corresponding entry from ping list
 	},
+
+	// Returns true if the provided ID matches an existing entry for a self-updating server status embed
+	isEmbedIdTaken(embedId, guildId, channelId) {
+		return fs.existsSync(`${embedDirectory}/${getEmbedFile(embedId, guildId, channelId)}`);
+	},
 };
