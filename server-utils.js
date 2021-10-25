@@ -149,7 +149,13 @@ module.exports = {
 					});
 				}).catch(error => {
 					if (error.code == 10008) {
-						reject(`Message from status embed \`${embedFile}\` no longer exists`);
+						try {
+							fs.rmSync(embedPath);
+						}
+						catch (fsError) {
+							reject(`Failed to delete the status embed \`${embedFile}\` due to it's message no longer existing: ${fsError}`);
+						}
+						reject(`The message from status embed \`${embedFile}\` no longer exists and it's corresponding entry has been removed`);
 					}
 					reject(error);
 				});
