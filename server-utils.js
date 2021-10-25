@@ -83,6 +83,7 @@ module.exports = {
 				server.ping(serverData).then(pingData => {
 					const fileArray = [];
 					const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+					serverData.icon = statusEmbed.thumbnail.url;
 
 					statusEmbed.setTimestamp()
 						.setFooter('Last updated');
@@ -128,7 +129,7 @@ module.exports = {
 						.setFooter('Last updated');
 
 					getEmbedMessage(client, embedData).then(message => {
-						message.edit({ embeds: [statusEmbed], files: fileArray }).then(() => {
+						message.edit({ embeds: [statusEmbed] }).then(() => {
 							fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
 
 							resolve();
