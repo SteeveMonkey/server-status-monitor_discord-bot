@@ -120,26 +120,30 @@ module.exports = {
 		const server = client.pingTypes.get(serverData.type);
 
 		return new Promise((resolve, reject) => {
-			try {
-				server.ping(serverData).then(pingData => {
-					const fileArray = [];
-					const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+			server.ping(serverData).then(pingData => {
+				const fileArray = [];
+				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-					statusEmbed.setTimestamp()
-						.setFooter('Last updated');
+				statusEmbed.setTimestamp()
+					.setFooter('Last updated');
 
-					getEmbedMessage(client, embedData).then(message => {
-						message.edit({ embeds: [statusEmbed] }).then(() => {
-							fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
+				getEmbedMessage(client, embedData).then(message => {
+					message.edit({ embeds: [statusEmbed] }).then(() => {
+						fs.writeFileSync(`${embedDirectory}/${embedFile}`, JSON.stringify(embedData));
 
-							resolve();
-						});
+						resolve();
+					}).catch(error => {
+						reject(error);
 					});
+				}).catch(error => {
+					if (error.code == 10008) {
+						reject(`Message from status embed \`${embedFile}\` no longer exists`);
+					}
+					reject(error);
 				});
-			}
-			catch (error) {
+			}).catch(error => {
 				reject(error);
-			}
+			});
 		});
 	},
 
