@@ -57,7 +57,7 @@ function continuouslyUpdateStatusEmbeds() {
 	// Schedule the next status embed update
 	setTimeout(() => {
 		continuouslyUpdateStatusEmbeds();
-	}, config.pingFrequency / client.pingList.size());
+	}, config.pingInterval / client.pingList.size());
 
 	// Update the server status of the current Embed
 	ServerUtils.updateStatusEmbed(client, client.pingList.get());
