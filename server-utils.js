@@ -58,7 +58,7 @@ module.exports = {
 			};
 		}
 		else {
-			throw new Error('Expected and image URI for the first argument');
+			throw new Error('Expected an image URI for the first argument');
 		}
 	},
 
