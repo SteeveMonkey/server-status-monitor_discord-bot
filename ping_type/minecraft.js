@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const ServerUtils = require('../server-utils');
 const https = require('https');
 
 module.exports = {
@@ -132,12 +133,10 @@ module.exports = {
 
 		// Server Favicon
 		if (pingData.favicon) {
-			const data = pingData.favicon.split(',')[1];
-			const buf = new Buffer.from(data, 'base64');
-			const file = new Discord.MessageAttachment(buf, 'server-icon.png');
+			const iconAttachment = ServerUtils.imageUriToAttachment(pingData.favicon, 'server-icon');
 
-			files.push(file);
-			statusEmbed.setThumbnail('attachment://server-icon.png');
+			files.push(iconAttachment.attachment);
+			statusEmbed.setThumbnail(iconAttachment.reference);
 		}
 		else if (serverData.icon) {
 			statusEmbed.setThumbnail(serverData.icon);
