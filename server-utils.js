@@ -153,6 +153,7 @@ module.exports = {
 				}).catch(error => {
 					if (error.code == 10008) {
 						try {
+							client.pingList.remove(embedFile);
 							fs.rmSync(embedPath);
 						}
 						catch (fsError) {
