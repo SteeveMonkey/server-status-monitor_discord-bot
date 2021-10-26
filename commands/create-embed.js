@@ -4,7 +4,7 @@ const CommandUtils = require('../command-utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('new-embed')
+		.setName('create-embed')
 		.setDescription('Creates a new self-updating status message in the current channel')
 		.addStringOption(option => option
 			.setName('embed-id')
