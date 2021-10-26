@@ -146,7 +146,7 @@ module.exports = {
 							reject(error);
 						}
 
-						resolve();
+						resolve(`Successfully updated message from status embed \`${embedFile}\``);
 					}).catch(error => {
 						reject(error);
 					});
