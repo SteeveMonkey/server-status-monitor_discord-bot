@@ -32,8 +32,11 @@ module.exports = {
 		};
 
 		// Handle args
-		// TODO: Check if provided embedId already exists before continuing
 		embedId = options.getString('embed-id');
+		if (ServerUtils.isEmbedIdTaken(embedId, interaction.guild.id, interaction.channel.id)) {
+			interaction.reply({ content: `An embed with the ID \`${embedId}\` already exists in this channel.\nPlease try again with a different ID`, ephemeral: true });
+			return;
+		}
 		serverData.type = options.getString('server-type');
 		serverData.address = options.getString('address');
 		if (options.getNumber('port') !== undefined) {
