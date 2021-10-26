@@ -62,7 +62,9 @@ function continuouslyUpdateStatusEmbeds() {
 
 	// Update the server status of the current Embed
 	ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(logMessage => {
-		console.log(logMessage);
+		if (config.verboseLogging) {
+			console.log(logMessage);
+		}
 	}).catch(error => {
 		console.log(error);
 	});

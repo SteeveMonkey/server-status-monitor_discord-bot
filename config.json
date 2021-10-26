@@ -1,4 +1,5 @@
 {
 	"prefix": "/",
-	"pingInterval": 300000
+	"pingInterval": 300000,
+	"verboseLogging": true
 }
