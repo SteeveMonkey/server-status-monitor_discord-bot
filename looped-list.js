@@ -51,6 +51,22 @@ class LoopedList {
 		return this.peekNode().data;
 	}
 
+	remove(data) {
+		let node = this.node;
+
+		for (let i = 0; i < this.length; i++) {
+			node = node.next;
+
+			if (node.data == data) {
+				detachNode(node);
+				this.length--;
+				if (node == this.node) {
+					this.node = this.node.next;
+				}
+			}
+		}
+	}
+
 	peekNode() {
 		if (this.length == 0) {
 			return null;
