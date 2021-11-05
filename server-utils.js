@@ -177,10 +177,54 @@ module.exports = {
 	},
 
 	// Delete self-updating server status embed
-	deleteStatusEmbed(message) {
-		message.delete();
+	deleteStatusEmbed(client, embedId, guildId, channelId) {
+		return new Promise((resolve, reject) => {
+			const embedFile = getEmbedFile(embedId, guildId, channelId);
+			const embedPath = `${embedDirectory}/${embedFile}`;
+			let embedData;
 
-		// TODO: Remove corresponding entry from ping list
+			// Check if entered embed ID is in use in this channel
+			if (!this.isEmbedIdTaken(embedId, guildId, channelId)) {
+				resolve(`Could not find the status message with the ID \`${embedId}\` within this channel`);
+				return;
+			}
+
+			// Get data from embed entry
+			try {
+				embedData = JSON.parse(fs.readFileSync(embedPath));
+			}
+			catch (error) {
+				reject(error);
+				return;
+			}
+
+			// Delete message pointed to by embed data
+			getEmbedMessage(client, embedData).then(message => {
+				message.delete().then(() => {
+					try {
+						deleteEmbedEntry(client, embedFile);
+					}
+					catch (error) {
+						reject(error);
+						return;
+					}
+					resolve(`Successfully deleted the status message in this channel with the ID \`${embedId}\``);
+				}).catch(error => {
+					reject(error);
+				});
+			}).catch(error => {
+				if (error.code == 10008) {
+					try {
+						deleteEmbedEntry(client, embedFile);
+					}
+					catch (error2) {
+						reject(error2);
+					}
+					resolve(`The message for the status embed with the ID \`${embedId}\` no longer exists, however it's corresponding entry was successfully deleted`);
+				}
+				reject(error);
+			});
+		});
 	},
 
 	// Returns true if the provided ID matches an existing entry for a self-updating server status embed
