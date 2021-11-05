@@ -29,6 +29,14 @@ function getEmbedMessage(client, embedData) {
 	});
 }
 
+// Deletes the file and entry in pingList of the provided embed file name
+function deleteEmbedEntry(client, embedFile) {
+	const embedPath = `${embedDirectory}/${embedFile}`;
+
+	client.pingList.remove(embedFile);
+	fs.rmSync(embedPath);
+}
+
 module.exports = {
 	// Return LoopedList of active embeds to regularly update
 	getPingList() {
@@ -153,8 +161,7 @@ module.exports = {
 				}).catch(error => {
 					if (error.code == 10008) {
 						try {
-							client.pingList.remove(embedFile);
-							fs.rmSync(embedPath);
+							deleteEmbedEntry(client, embedFile);
 						}
 						catch (fsError) {
 							reject(`Failed to delete the status embed \`${embedFile}\` due to it's message no longer existing: ${fsError}`);
