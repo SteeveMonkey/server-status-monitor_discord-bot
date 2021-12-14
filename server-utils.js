@@ -173,6 +173,14 @@ module.exports = {
 		});
 	},
 
+	// Get embed data from the self-updating server status embed provided
+	getStatusEmbedData(embedId, guildId, channelId) {
+		const embedFile = getEmbedFile(embedId, guildId, channelId);
+		const embedPath = `${embedDirectory}/${embedFile}`;
+
+		return JSON.parse(fs.readFileSync(embedPath));
+	},
+
 	// Set embed data in self-updating server status embed
 	setStatusEmbedData(client, embedFile, newEmbedData) {
 		return new Promise((resolve, reject) => {
