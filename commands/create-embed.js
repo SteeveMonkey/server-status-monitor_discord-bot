@@ -51,6 +51,8 @@ module.exports = {
 			interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
 		}).catch(error => {
 			interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
+			console.log(`Failed to create new status embed \`${embedId}\`:`);
+			console.log(error);
 		});
 	},
 };
