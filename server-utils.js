@@ -173,8 +173,8 @@ module.exports = {
 		});
 	},
 
-	// Set data in self-updating server status embed
-	setStatusEmbed(client, embedFile, newEmbedData) {
+	// Set embed data in self-updating server status embed
+	setStatusEmbedData(client, embedFile, newEmbedData) {
 		return new Promise((resolve, reject) => {
 			const embedPath = `${embedDirectory}/${embedFile}`;
 
