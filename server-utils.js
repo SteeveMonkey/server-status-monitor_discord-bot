@@ -116,14 +116,18 @@ module.exports = {
 	},
 
 	// Passes server status as an embed message to the provided function
-	getStatusEmbed(client, serverData, EmbedCreated) {
-		const server = client.pingTypes.get(serverData.type);
+	getStatusEmbed(client, serverData) {
+		return new Promise((resolve, reject) => {
+			const server = client.pingTypes.get(serverData.type);
 
-		server.ping(serverData).then(pingData => {
-			const fileArray = [];
-			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+			server.ping(serverData).then(pingData => {
+				const fileArray = [];
+				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-			EmbedCreated(statusEmbed, fileArray);
+				resolve(statusEmbed, fileArray);
+			}).catch(error => {
+				reject(error);
+			});
 		});
 	},
 

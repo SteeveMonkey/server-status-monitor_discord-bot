@@ -34,8 +34,12 @@ module.exports = {
 		}
 
 		// Display status
-		ServerUtils.getStatusEmbed(interaction.client, serverData, function(statusEmbed, fileArray) {
+		ServerUtils.getStatusEmbed(interaction.client, serverData).then((statusEmbed, fileArray) => {
 			interaction.reply({ embeds: [statusEmbed], files: fileArray, ephemeral: true });
+		}).catch(error => {
+			interaction.editReply({ content: `Failed to get status of server:\n\`\`\`${error}\`\`\``, ephemeral: true });
+			console.log(`Failed to get status of provided \`${serverData.type}\` server:`);
+			console.log(error);
 		});
 	},
 };
