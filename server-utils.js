@@ -169,6 +169,26 @@ module.exports = {
 		});
 	},
 
+	// Set data in self-updating server status embed
+	setStatusEmbed(client, embedFile, newEmbedData) {
+		return new Promise((resolve, reject) => {
+			const embedPath = `${embedDirectory}/${embedFile}`;
+
+			try {
+				fs.writeFileSync(embedPath, JSON.stringify(newEmbedData));
+			}
+			catch (error) {
+				reject(error);
+			}
+
+			updateEmbedMessage(client, embedFile).then(() => {
+				resolve(`Successfully set new data in status embed \`${embedFile}\``);
+			}).catch(error => {
+				reject(error);
+			});
+		});
+	},
+
 	// Update information in self-updating server status embed
 	updateStatusEmbed(client, embedFile) {
 		return new Promise((resolve, reject) => {
