@@ -48,9 +48,11 @@ module.exports = {
 		const statusEmbed = new Discord.MessageEmbed();
 
 		// Server Type
-		statusEmbed.setAuthor('Minecraft Server',
-			'https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/12/Grass_Block_JE2.png/revision/latest?cb=20200830142618',
-			'https://www.minecraft.net/');
+		statusEmbed.setAuthor({
+			name: 'Minecraft Server',
+			url: 'https://www.minecraft.net/',
+			iconURL: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/12/Grass_Block_JE2.png/revision/latest?cb=20200830142618',
+		});
 
 		// Server Name
 		if (serverData.name) {

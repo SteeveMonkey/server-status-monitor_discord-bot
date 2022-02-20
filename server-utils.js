@@ -48,7 +48,7 @@ function updateEmbedMessage(client, embedFile) {
 			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
 			statusEmbed.setTimestamp()
-				.setFooter('Last updated');
+				.setFooter({text: 'Last updated'});
 
 			getEmbedMessage(client, embedData).then(message => {
 				message.edit({ embeds: [statusEmbed] }).then(() => {
@@ -143,7 +143,7 @@ class ServerUtils {
 				serverData.icon = statusEmbed.thumbnail.url;
 
 				statusEmbed.setTimestamp()
-					.setFooter('Last updated');
+					.setFooter({text: 'Last updated'});
 
 				sendEmbed(statusEmbed, fileArray).then(sentMessage => {
 					// Save embed for later editing
