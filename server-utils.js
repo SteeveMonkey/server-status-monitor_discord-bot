@@ -102,6 +102,19 @@ class ServerUtils {
 		return pingList;
 	}
 
+	// Returns Discord Collection containing all of the pingTypes available
+	static getPingTypes() {
+		const pingTypes = new Discord.Collection();
+		const serverTypeFiles = fs.readdirSync(serverTypeDirectory).filter(file => file.endsWith('.js'));
+
+		for (const file of serverTypeFiles) {
+			const serverType = require(`${serverTypeDirectory}/${file}`);
+			pingTypes.set(serverType.value, serverType);
+		}
+
+		return pingTypes;
+	}
+
 	// Returns an object containing a Discord.MessageAttachment and it's internal reference URL from provided image URI
 	static imageUriToAttachment(imageUri, imageName) {
 		let uriSplit = imageUri.split(',');

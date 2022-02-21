@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { SlashCommandStringOption } = require('@discordjs/builders');
+const ServerUtils = require('./server-utils');
 
 module.exports = {
 	// Returns Discord Collection caontaining all of the command available
@@ -31,19 +32,6 @@ module.exports = {
 		return option;
 	},
 
-	// Returns Discord Collection containing all of the pingTypes available
-	getPingTypes() {
-		const pingTypes = new Discord.Collection();
-		const serverTypeFiles = fs.readdirSync('./ping_type').filter(file => file.endsWith('.js'));
-
-		for (const file of serverTypeFiles) {
-			const serverType = require(`./ping_type/${file}`);
-			pingTypes.set(serverType.value, serverType);
-		}
-
-		return pingTypes;
-	},
-
 	// Return slash command option containing the list of supported server ping types as choices
 	getPingTypesOption(name, description, isRequired) {
 		const option = new SlashCommandStringOption()
@@ -51,7 +39,7 @@ module.exports = {
 			.setDescription(description)
 			.setRequired(isRequired);
 
-		const pingTypes = this.getPingTypes();
+		const pingTypes = ServerUtils.getPingTypes();
 		for (const serverType of pingTypes) {
 			option.addChoice(serverType[1].name, serverType[0]);
 		}
