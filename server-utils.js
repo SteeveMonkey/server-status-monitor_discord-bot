@@ -201,6 +201,13 @@ class ServerUtils {
 		return JSON.parse(fs.readFileSync(embedPath));
 	}
 
+	// Get default embed data for given server ping type
+	static getDefaultStatusEmbedData(serverType) {
+		const serverDataPath = getDefaultServerDataPath(serverType);
+
+		return JSON.parse(fs.readFileSync(serverDataPath));
+	}
+
 	// Set embed data in self-updating server status embed
 	static setStatusEmbedData(client, embedFile, newEmbedData) {
 		return new Promise((resolve, reject) => {
