@@ -3,11 +3,17 @@ const Discord = require('discord.js');
 const LoopedList = require('./looped-list');
 
 const embedDirectory = './embed-list';
+const serverTypeDirectory = './ping_type';
 
 
 // Returns file name of self-updating server status embed
 function getEmbedFile(embedId, guildId, channelId) {
 	return `${guildId}-${channelId}-${embedId}.json`;
+}
+
+// Returns path to default data for provided server ping type
+function getDefaultServerDataPath(serverType) {
+	return `${serverTypeDirectory}/${serverType}-data.json`;
 }
 
 // Returns promise containing status embed message obtained from provided embed data
