@@ -1,0 +1,25 @@
+{
+	"type": "minecraft",
+
+	"name": null,
+	"description": null,
+	"website": null,
+	"icon": null,
+
+	"requiresModdedClient": false,
+	"modpackName": null,
+	"modpackVersion": null,
+	"modpackURL": null,
+
+	"java": true,
+	"javaVersion": null,
+	"javaAddress": "0.0.0.0",
+	"javaPort": null,
+
+	"bedrock": false,
+	"bedrockVersion": null,
+	"bedrockAddress": null,
+	"bedrockPort": null,
+
+	"mapURL": null
+}
