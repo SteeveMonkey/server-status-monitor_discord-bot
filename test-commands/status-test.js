@@ -14,15 +14,20 @@ module.exports = {
 			website: 'http://example.com/',
 			icon: 'http://ielts-results.weebly.com/uploads/4/0/6/6/40661105/1113084_orig.jpg',
 
-			java: true,
-			javaVersion: '1.15.2',
-			javaAddress: 'example.com',
-			// javaPort: '12022',
+			showModpack: false,
+			modpackName: 'Example modpack',
+			modpackVersion: '1.0',
+			modpackURL: 'http://example.com/',
 
-			bedrock: true,
+			showAddress: true,
+			version: '1.15.2',
+			address: 'example.com',
+			port: null,
+
+			showBedrockAddress: true,
 			bedrockVersion: '1.14.60',
 			bedrockAddress: 'example.com',
-			// bedrockPort: '12010',
+			bedrockPort: null,
 
 			mapURL: 'http://example.com/',
 		};

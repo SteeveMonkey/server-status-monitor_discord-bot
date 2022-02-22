@@ -6,17 +6,17 @@
 	"website": null,
 	"icon": null,
 
-	"requiresModdedClient": false,
+	"showModpack": false,
 	"modpackName": null,
 	"modpackVersion": null,
 	"modpackURL": null,
 
-	"java": true,
-	"javaVersion": null,
-	"javaAddress": "0.0.0.0",
-	"javaPort": null,
+	"showAddress": true,
+	"version": null,
+	"address": "0.0.0.0",
+	"port": null,
 
-	"bedrock": false,
+	"showBedrockAddress": false,
 	"bedrockVersion": null,
 	"bedrockAddress": null,
 	"bedrockPort": null,
