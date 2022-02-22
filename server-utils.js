@@ -11,8 +11,8 @@ function getEmbedFile(embedId, guildId, channelId) {
 	return `${guildId}-${channelId}-${embedId}.json`;
 }
 
-// Returns path to default data for provided server ping type
-function getDefaultServerDataPath(serverType) {
+// Returns path to attribute data for provided server ping type
+function getServerDataAttributePath(serverType) {
 	return `${serverTypeDirectory}/${serverType}-data.json`;
 }
 
@@ -201,16 +201,17 @@ class ServerUtils {
 		return JSON.parse(fs.readFileSync(embedPath));
 	}
 
-	// Get default embed data for given server ping type
-	static getDefaultStatusEmbedData(serverType) {
-		const serverDataPath = getDefaultServerDataPath(serverType);
+	// Get server attributes for given server ping type
+	static getServerDataAttributes(serverType) {
+		const serverDataPath = getServerDataAttributePath(serverType);
 
 		return JSON.parse(fs.readFileSync(serverDataPath));
 	}
 
 	// Set embed data in self-updating server status embed
-	static setStatusEmbedData(client, embedFile, newEmbedData) {
+	static setStatusEmbedData(client, embedId, guildId, channelId, newEmbedData) {
 		return new Promise((resolve, reject) => {
+			const embedFile = getEmbedFile(embedId, guildId, channelId);
 			const embedPath = `${embedDirectory}/${embedFile}`;
 
 			try {
@@ -221,9 +222,9 @@ class ServerUtils {
 			}
 
 			updateEmbedMessage(client, embedFile).then(() => {
-				resolve(`Successfully set new data in status embed \`${embedFile}\``);
+				resolve(embedFile);
 			}).catch(error => {
-				reject(error);
+				reject(error, embedFile);
 			});
 		});
 	}
@@ -232,7 +233,7 @@ class ServerUtils {
 	static updateStatusEmbed(client, embedFile) {
 		return new Promise((resolve, reject) => {
 			updateEmbedMessage(client, embedFile).then(() => {
-				resolve(`Successfully updated message from status embed \`${embedFile}\``);
+				resolve(`Successfully updated status embed \`${embedFile}\``);
 			}).catch(error => {
 				reject(error);
 			});

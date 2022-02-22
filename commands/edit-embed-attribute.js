@@ -3,7 +3,7 @@ const ServerUtils = require('../server-utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('edit-embed')
+		.setName('edit-embed-attribute')
 		.setDescription('Modifies a single attribute of a self-updating status message in the current channel')
 		.addStringOption(option => option
 			.setName('embed-id')
@@ -26,15 +26,22 @@ module.exports = {
 		const newValue = options.getString('value');
 
 		const embedData = ServerUtils.getStatusEmbedData(embedId, interaction.guild.id, interaction.channel.id);
-		const defaultEmbedData = ServerUtils.getDefaultStatusEmbedData(embedData.type);
+		const serverDataAttributes = ServerUtils.getServerDataAttributes(embedData.serverData.type);
 
 		// Check if attribute id is valid
-		if (attributeId in !defaultEmbedData) {
-			// TODO: Report to user
+		if (!(attributeId in serverDataAttributes)) {
+			interaction.reply({ content: `Failed to change the attribute for the server status embed with the id \`${embedId}\` in this channel as the server ping type of \`${embedData.type}\` does not support using the attribute \`${attributeId}\``, ephemeral: true });
 			return;
 		}
 
 		// Edit self-updating server status embed
-		// TODO
+		embedData.serverData[attributeId] = newValue;
+		ServerUtils.setStatusEmbedData(interaction.client, embedId, interaction.guild.id, interaction.channel.id, embedData).then(embedFile => {
+			interaction.reply({ content: `Succesfully set the attribute \`${attributeId}\` to \`${newValue}\` for the status embed with the id \`${embedId}\` in this channel`, ephemeral: true });
+			console.log(`Successfully set new data in status embed \`${embedFile}\``);
+		}).catch((error, embedFile) => {
+			interaction.reply({ content: `Failed to change data of status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
+			console.error(`Failed to set new data in status embed \`${embedFile}\`:\n${error}`);
+		});
 	},
 };
