@@ -48,15 +48,17 @@ module.exports = {
 		const statusEmbed = new Discord.MessageEmbed();
 
 		// Server Type
-		statusEmbed.setAuthor('Minecraft Server',
-			'https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/12/Grass_Block_JE2.png/revision/latest?cb=20200830142618',
-			'https://www.minecraft.net/');
+		statusEmbed.setAuthor({
+			name: 'Minecraft Server',
+			url: 'https://www.minecraft.net/',
+			iconURL: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/12/Grass_Block_JE2.png/revision/latest?cb=20200830142618',
+		});
 
 		// Server Name
 		if (serverData.name) {
 			statusEmbed.setTitle(serverData.name);
 		}
-		else {
+		else if (serverData.showAddress) {
 			let address = `${serverData.address}`;
 			if (serverData.port) {
 				address += `:${serverData.port}`;
@@ -79,21 +81,29 @@ module.exports = {
 			motd += pingData.motd;
 		}
 
-		if (motd != '' && (serverData.java || serverData.bedrock || serverData.mapURL)) {
+		if (motd != '' && (serverData.showAddress || serverData.bedrock || serverData.mapURL)) {
 			motd += '\n\u200B';
 		}
 		statusEmbed.setDescription(motd);
 
+		// Modpack Field
+		if (serverData.showModpack) {
+			statusEmbed.addField(
+				`${serverData.modpackName} _\`${serverData.modpackVersion}\`_`,
+				`${serverData.modpackURL}`,
+			);
+		}
+
 		// Java Edition Field
-		if (serverData.java) {
-			let address = `${serverData.javaAddress}`;
+		if (serverData.showAddress && serverData.name) {
+			let address = `${serverData.address}`;
 			if (serverData.port) {
 				address += `:${serverData.port}`;
 			}
 
 			let version;
-			if (serverData.javaVersion) {
-				version = serverData.javaVersion;
+			if (serverData.version) {
+				version = serverData.version;
 			}
 			else if (pingData.status == 'success') {
 				version = pingData.server.name;
@@ -103,7 +113,7 @@ module.exports = {
 			}
 
 			statusEmbed.addField(
-				`Java Edition: ${version}`,
+				`Java Edition _\`${version}\`_`,
 				`Address: \`${address}\``,
 			);
 		}
@@ -118,7 +128,7 @@ module.exports = {
 				port = '19132';
 			}
 			statusEmbed.addField(
-				`Bedrock Edition: ${serverData.bedrockVersion}`,
+				`Bedrock Edition _\`${serverData.bedrockVersion}\`_`,
 				`Address: \`${serverData.bedrockAddress}\`\nPort: \`${port}\``,
 			);
 		}

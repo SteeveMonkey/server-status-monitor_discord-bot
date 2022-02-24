@@ -3,11 +3,17 @@ const Discord = require('discord.js');
 const LoopedList = require('./looped-list');
 
 const embedDirectory = './embed-list';
+const serverTypeDirectory = './ping_type';
 
 
 // Returns file name of self-updating server status embed
 function getEmbedFile(embedId, guildId, channelId) {
 	return `${guildId}-${channelId}-${embedId}.json`;
+}
+
+// Returns path to attribute data for provided server ping type
+function getServerDataAttributePath(serverType) {
+	return `${serverTypeDirectory}/${serverType}-data.json`;
 }
 
 // Returns promise containing status embed message obtained from provided embed data
@@ -29,6 +35,51 @@ function getEmbedMessage(client, embedData) {
 	});
 }
 
+function updateEmbedMessage(client, embedFile) {
+	return new Promise((resolve, reject) => {
+		const embedPath = `${embedDirectory}/${embedFile}`;
+		let embedData;
+		try {
+			embedData = JSON.parse(fs.readFileSync(embedPath));
+		}
+		catch (error) {
+			reject(error);
+		}
+
+		const serverData = embedData.serverData;
+		const server = client.pingTypes.get(serverData.type);
+
+		server.ping(serverData).then(pingData => {
+			const fileArray = [];
+			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+
+			statusEmbed.setTimestamp()
+				.setFooter({ text: 'Last updated' });
+
+			getEmbedMessage(client, embedData).then(message => {
+				message.edit({ embeds: [statusEmbed] }).then(() => {
+					resolve();
+				}).catch(error => {
+					reject(error);
+				});
+			}).catch(error => {
+				if (error.code == 10008) {
+					try {
+						deleteEmbedEntry(client, embedFile);
+					}
+					catch (fsError) {
+						reject(`Attempted to delete the status embed \`${embedFile}\` due to it's message no longer existing, but the operation failed: ${fsError}`);
+					}
+					reject(`The message from status embed \`${embedFile}\` no longer exists and it's corresponding entry has been removed`);
+				}
+				reject(error);
+			});
+		}).catch(error => {
+			reject(error);
+		});
+	});
+}
+
 // Deletes the file and entry in pingList of the provided embed file name
 function deleteEmbedEntry(client, embedFile) {
 	const embedPath = `${embedDirectory}/${embedFile}`;
@@ -37,9 +88,10 @@ function deleteEmbedEntry(client, embedFile) {
 	fs.rmSync(embedPath);
 }
 
-module.exports = {
+class ServerUtils {
+
 	// Return LoopedList of active embeds to regularly update
-	getPingList() {
+	static getPingList() {
 		const pingList = new LoopedList();
 		const embedFiles = fs.readdirSync(embedDirectory).filter(file => file.endsWith('.json'));
 
@@ -48,10 +100,23 @@ module.exports = {
 		}
 
 		return pingList;
-	},
+	}
+
+	// Returns Discord Collection containing all of the pingTypes available
+	static getPingTypes() {
+		const pingTypes = new Discord.Collection();
+		const serverTypeFiles = fs.readdirSync(serverTypeDirectory).filter(file => file.endsWith('.js'));
+
+		for (const file of serverTypeFiles) {
+			const serverType = require(`${serverTypeDirectory}/${file}`);
+			pingTypes.set(serverType.value, serverType);
+		}
+
+		return pingTypes;
+	}
 
 	// Returns an object containing a Discord.MessageAttachment and it's internal reference URL from provided image URI
-	imageUriToAttachment(imageUri, imageName) {
+	static imageUriToAttachment(imageUri, imageName) {
 		let uriSplit = imageUri.split(',');
 		const data = uriSplit[1];
 		uriSplit = uriSplit[0].split(';');
@@ -68,22 +133,26 @@ module.exports = {
 		else {
 			throw new Error('Expected an image URI for the first argument');
 		}
-	},
+	}
 
 	// Passes server status as an embed message to the provided function
-	getStatusEmbed(client, serverData, EmbedCreated) {
-		const server = client.pingTypes.get(serverData.type);
+	static getStatusEmbed(client, serverData) {
+		return new Promise((resolve, reject) => {
+			const server = client.pingTypes.get(serverData.type);
 
-		server.ping(serverData).then(pingData => {
-			const fileArray = [];
-			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+			server.ping(serverData).then(pingData => {
+				const fileArray = [];
+				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
 
-			EmbedCreated(statusEmbed, fileArray);
+				resolve(statusEmbed, fileArray);
+			}).catch(error => {
+				reject(error);
+			});
 		});
-	},
+	}
 
 	// Passes self-updating server status embed to provided function
-	createStatusEmbed(client, embedId, serverData, sendEmbed) {
+	static createStatusEmbed(client, embedId, serverData, sendEmbed) {
 		return new Promise((resolve, reject) => {
 			const server = client.pingTypes.get(serverData.type);
 
@@ -93,7 +162,7 @@ module.exports = {
 				serverData.icon = statusEmbed.thumbnail.url;
 
 				statusEmbed.setTimestamp()
-					.setFooter('Last updated');
+					.setFooter({ text: 'Last updated' });
 
 				sendEmbed(statusEmbed, fileArray).then(sentMessage => {
 					// Save embed for later editing
@@ -122,62 +191,57 @@ module.exports = {
 				reject(error);
 			});
 		});
-	},
+	}
 
-	// Update information in self-updating server status embed
-	updateStatusEmbed(client, embedFile) {
+	// Get embed data from the self-updating server status embed provided
+	static getStatusEmbedData(embedId, guildId, channelId) {
+		const embedFile = getEmbedFile(embedId, guildId, channelId);
+		const embedPath = `${embedDirectory}/${embedFile}`;
+
+		return JSON.parse(fs.readFileSync(embedPath));
+	}
+
+	// Get server attributes for given server ping type
+	static getServerDataAttributes(serverType) {
+		const serverDataPath = getServerDataAttributePath(serverType);
+
+		return JSON.parse(fs.readFileSync(serverDataPath));
+	}
+
+	// Set embed data in self-updating server status embed
+	static setStatusEmbedData(client, embedId, guildId, channelId, newEmbedData) {
 		return new Promise((resolve, reject) => {
+			const embedFile = getEmbedFile(embedId, guildId, channelId);
 			const embedPath = `${embedDirectory}/${embedFile}`;
-			let embedData;
+
 			try {
-				embedData = JSON.parse(fs.readFileSync(embedPath));
+				fs.writeFileSync(embedPath, JSON.stringify(newEmbedData));
 			}
 			catch (error) {
 				reject(error);
 			}
-			const serverData = embedData.serverData;
-			const server = client.pingTypes.get(serverData.type);
 
-			server.ping(serverData).then(pingData => {
-				const fileArray = [];
-				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+			updateEmbedMessage(client, embedFile).then(() => {
+				resolve(embedFile);
+			}).catch(error => {
+				reject(error, embedFile);
+			});
+		});
+	}
 
-				statusEmbed.setTimestamp()
-					.setFooter('Last updated');
-
-				getEmbedMessage(client, embedData).then(message => {
-					message.edit({ embeds: [statusEmbed] }).then(() => {
-						try {
-							fs.writeFileSync(embedPath, JSON.stringify(embedData));
-						}
-						catch (error) {
-							reject(error);
-						}
-
-						resolve(`Successfully updated message from status embed \`${embedFile}\``);
-					}).catch(error => {
-						reject(error);
-					});
-				}).catch(error => {
-					if (error.code == 10008) {
-						try {
-							deleteEmbedEntry(client, embedFile);
-						}
-						catch (fsError) {
-							reject(`Failed to delete the status embed \`${embedFile}\` due to it's message no longer existing: ${fsError}`);
-						}
-						reject(`The message from status embed \`${embedFile}\` no longer exists and it's corresponding entry has been removed`);
-					}
-					reject(error);
-				});
+	// Update information in self-updating server status embed
+	static updateStatusEmbed(client, embedFile) {
+		return new Promise((resolve, reject) => {
+			updateEmbedMessage(client, embedFile).then(() => {
+				resolve(`Successfully updated status embed \`${embedFile}\``);
 			}).catch(error => {
 				reject(error);
 			});
 		});
-	},
+	}
 
 	// Delete self-updating server status embed
-	deleteStatusEmbed(client, embedId, guildId, channelId) {
+	static deleteStatusEmbed(client, embedId, guildId, channelId) {
 		return new Promise((resolve, reject) => {
 			const embedFile = getEmbedFile(embedId, guildId, channelId);
 			const embedPath = `${embedDirectory}/${embedFile}`;
@@ -225,10 +289,12 @@ module.exports = {
 				reject(error);
 			});
 		});
-	},
+	}
 
 	// Returns true if the provided ID matches an existing entry for a self-updating server status embed
-	isEmbedIdTaken(embedId, guildId, channelId) {
+	static isEmbedIdTaken(embedId, guildId, channelId) {
 		return fs.existsSync(`${embedDirectory}/${getEmbedFile(embedId, guildId, channelId)}`);
-	},
-};
+	}
+}
+
+module.exports = ServerUtils;

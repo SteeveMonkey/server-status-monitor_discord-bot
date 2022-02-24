@@ -6,7 +6,7 @@ const CommandUtils = require('./command-utils');
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGES] });
 client.commands = CommandUtils.getCommands();
-client.pingTypes = CommandUtils.getPingTypes();
+client.pingTypes = ServerUtils.getPingTypes();
 client.pingList = ServerUtils.getPingList();
 
 
@@ -66,6 +66,6 @@ function continuouslyUpdateStatusEmbeds() {
 			console.log(logMessage);
 		}
 	}).catch(error => {
-		console.log(error);
+		console.error(error);
 	});
 }
