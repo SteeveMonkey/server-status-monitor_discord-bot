@@ -3,9 +3,9 @@ const ServerUtils = require('../server-utils');
 const https = require('https');
 
 module.exports = {
-	name: 'Minecraft',
 	value: 'minecraft',
-	description: 'Used for Minecraft Java Edition servers and can display additional Bedrock Edition info',
+	name: 'Minecraft',
+	description: 'Used for Minecraft Java Edition servers. Can display Bedrock connection info for servers that also accept Bedrock clients',
 
 	ping(serverData) {
 		return new Promise((resolve, reject) => {
