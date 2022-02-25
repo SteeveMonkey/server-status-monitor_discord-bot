@@ -31,8 +31,14 @@ module.exports = {
 					});
 
 					pingResponse.on('end', function() {
-						const buffer = Buffer.concat(chunks);
-						resolve(JSON.parse(buffer));
+						try {
+							const buffer = Buffer.concat(chunks);
+							const pingData = JSON.parse(buffer);
+							resolve(pingData);
+						}
+						catch (error) {
+							reject(error);
+						}
 					});
 				});
 
