@@ -1,25 +1,112 @@
 {
-	"type": "minecraft",
+	"name": {
+		"name": "Server Name",
+		"description": "The name of the server",
+		"valueType": "string",
+		"defaultValue": null
+	},
+	"description": {
+		"name": "Server Description",
+		"description": "A brief description of the server",
+		"valueType": "string",
+		"defaultValue": null
+	},
+	"website": {
+		"name": "Server Website",
+		"description": "A URL leading to the website for the server",
+		"valueType": "url",
+		"defaultValue": null
+	},
+	"icon": {
+		"name": "Server Icon",
+		"description": "A URL leading directly to an image for the server icon",
+		"valueType": "imageUrl",
+		"defaultValue": null
+	},
 
-	"name": null,
-	"description": null,
-	"website": null,
-	"icon": null,
 
-	"showModpack": false,
-	"modpackName": null,
-	"modpackVersion": null,
-	"modpackURL": null,
+	"showModpack": {
+		"name": "Modpack Field Visible",
+		"description": "If the modpack field should be visible\n_Should be true if the server requires the client to be modded to connect_",
+		"valueType": "boolean",
+		"defaultValue": false
+	},
+	"modpackName": {
+		"name": "Modpack Name",
+		"description": "The name of the modpack that the server is running",
+		"valueType": "string",
+		"defaultValue": null
+	},
+	"modpackVersion": {
+		"name": "Modpack Version",
+		"description": "The version of the modpack that the server is running",
+		"valueType": "string",
+		"defaultValue": null
+	},
+	"modpackURL": {
+		"name": "Modpack Website",
+		"description": "A URL to the website for the modpack",
+		"valueType": "url",
+		"defaultValue": null
+	},
 
-	"showAddress": true,
-	"version": null,
-	"address": "0.0.0.0",
-	"port": null,
 
-	"showBedrockAddress": false,
-	"bedrockVersion": null,
-	"bedrockAddress": null,
-	"bedrockPort": null,
+	"showAddress": {
+		"name": "Server Connection Visible",
+		"description": "If the server connection (ip & port) should be visible\n_Only Java Edition servers are supported_",
+		"valueType": "boolean",
+		"defaultValue": true
+	},
+	"version": {
+		"name": "Server Version",
+		"description": "The minecraft version the server is running\n_If this is left blank the version obtained by the ping results will be displayed_\n_Only Java Edition servers are supported_",
+		"valueType": "string",
+		"defaultValue": null
+	},
+	"address": {
+		"name": "Server Address",
+		"description": "The ip address used to ping the server\n_This cannot be left blank and the port must be exluded_\n_Only Java Edition servers are supported_",
+		"valueType": "ip",
+		"defaultValue": null
+	},
+	"port": {
+		"name": "Server Port",
+		"description": "The port used to ping the server\n_If left blank the default port is used and will be hidden_\n_Only Java Edition servers are supported_",
+		"valueType": "port",
+		"defaultValue": null
+	},
 
-	"mapURL": null
+
+	"showBedrockAddress": {
+		"name": "Bedrock Connection Visible",
+		"description": "If the server connection for Bedrock should be visible\n_This is only for Java Edition servers that can accept Bedrock clients_",
+		"valueType": "boolean",
+		"defaultValue": false
+	},
+	"bedrockVersion": {
+		"name": "Bedrock Version",
+		"description": "The Bedrock version(s) of clients that the server will accept",
+		"valueType": "string",
+		"defaultValue": null
+	},
+	"bedrockAddress": {
+		"name": "Bedrock Address",
+		"description": "The address used by Bedrock clients to connect",
+		"valueType": "ip",
+		"defaultValue": null
+	},
+	"bedrockPort": {
+		"name": "Bedrock Port",
+		"description": "The port used by Bedrock client to connect",
+		"valueType": "port",
+		"defaultValue": null
+	},
+
+
+	"mapURL": {
+		"name": "Map Website",
+		"description": "A URL to the web map for the server\n_Leave blank if there is no web map or do not want it to be visible_",
+		"valueType": "url",
+		"defaultValue": null
+	}
 }

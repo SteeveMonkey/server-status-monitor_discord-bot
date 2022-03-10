@@ -27,7 +27,12 @@ module.exports = {
 					const chunks = [];
 
 					pingResponse.on('data', function(chunk) {
-						chunks.push(chunk);
+						try {
+							chunks.push(chunk);
+						}
+						catch (error) {
+							reject(error);
+						}
 					});
 
 					pingResponse.on('end', function() {
