@@ -26,7 +26,7 @@ module.exports = {
 		const newValue = options.getString('value');
 
 		const embedData = ServerUtils.getStatusEmbedData(embedId, interaction.guild.id, interaction.channel.id);
-		const serverDataAttributes = ServerUtils.getServerDataAttributes(embedData.serverData.type);
+		const serverDataAttributes = ServerUtils.getServerDataTemplate(embedData.serverData.type);
 
 		// Check if attribute id is valid
 		if (!(attributeId in serverDataAttributes)) {

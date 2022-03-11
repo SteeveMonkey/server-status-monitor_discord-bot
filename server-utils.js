@@ -12,7 +12,7 @@ function getEmbedFile(embedId, guildId, channelId) {
 }
 
 // Returns path to attribute data for provided server ping type
-function getServerDataAttributePath(serverType) {
+function getServerDataTemplatePath(serverType) {
 	return `${serverTypeDirectory}/${serverType}-data.json`;
 }
 
@@ -202,8 +202,8 @@ class ServerUtils {
 	}
 
 	// Get server attributes for given server ping type
-	static getServerDataAttributes(serverType) {
-		const serverDataPath = getServerDataAttributePath(serverType);
+	static getServerDataTemplate(serverType) {
+		const serverDataPath = getServerDataTemplatePath(serverType);
 
 		return JSON.parse(fs.readFileSync(serverDataPath));
 	}
