@@ -23,21 +23,21 @@ module.exports = {
 			.setDescription('Enter the port used to reach the server')),
 	execute(interaction) {
 		const options = interaction.options;
-		let embedId = null;
-		const serverData = {
-			type: null,
-
-			address: null,
-			port: null,
-		};
 
 		// Handle args
-		embedId = options.getString('embed-id');
+		const embedId = options.getString('embed-id');
 		if (ServerUtils.isEmbedIdTaken(embedId, interaction.guild.id, interaction.channel.id)) {
 			interaction.reply({ content: `An embed with the ID \`${embedId}\` already exists in this channel.\nPlease try again with a different ID`, ephemeral: true });
 			return;
 		}
-		serverData.type = options.getString('server-type');
+
+		const serverType = options.getString('server-type');
+
+		const serverData = {
+			type: serverType,
+			...ServerUtils.getDefaultServerData(serverType),
+		};
+
 		serverData.address = options.getString('address');
 		if (options.getNumber('port') !== undefined) {
 			serverData.port = options.getNumber('port');

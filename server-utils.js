@@ -208,6 +208,18 @@ class ServerUtils {
 		return JSON.parse(fs.readFileSync(serverDataPath));
 	}
 
+	static getDefaultServerData(serverType) {
+		const serverDataPath = getServerDataTemplatePath(serverType);
+		const serverDataTemplate = JSON.parse(fs.readFileSync(serverDataPath));
+		const serverData = {};
+
+		for (const attribute in serverDataTemplate) {
+			serverData[attribute] = serverDataTemplate[attribute].defaultValue;
+		}
+
+		return serverData;
+	}
+
 	// Set embed data in self-updating server status embed
 	static setStatusEmbedData(client, embedId, guildId, channelId, newEmbedData) {
 		return new Promise((resolve, reject) => {
