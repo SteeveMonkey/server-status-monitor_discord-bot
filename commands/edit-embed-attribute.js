@@ -25,8 +25,14 @@ module.exports = {
 		const attributeId = options.getString('attribute');
 		const newValue = options.getString('value');
 
+		if (!ServerUtils.isEmbedIdTaken(embedId, interaction.guild.id, interaction.channel.id)) {
+			interaction.reply({ content: `An embed with the ID \`${embedId}\` does not exist in this channel.\nPlease try again with a different ID`, ephemeral: true });
+			return;
+		}
+
 		const embedData = ServerUtils.getStatusEmbedData(embedId, interaction.guild.id, interaction.channel.id);
 		const serverDataAttributes = ServerUtils.getServerDataTemplate(embedData.serverData.type);
+
 
 		// Check if attribute id is valid
 		if (!(attributeId in serverDataAttributes)) {
