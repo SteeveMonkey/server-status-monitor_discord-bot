@@ -30,7 +30,9 @@ module.exports = {
 		ServerUtils.deleteStatusEmbed(interaction.client, embedId, interaction.guild.id, interaction.channel.id).then(messageContent => {
 			interaction.reply({ content: messageContent, ephemeral: true });
 		}).catch(error => {
-			console.log(`The delete-embed command encountered an error: ${error}`);
+			interaction.reply({ content: `Failed to delete status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
+			console.log(`Failed to delete status embed '${embedId}':`);
+			console.error(error);
 		});
 	},
 };

@@ -74,8 +74,8 @@ module.exports = {
 			}
 		}).catch(error => {
 			interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
-			console.log(`Failed to create new status embed \`${embedId}\`:`);
-			console.log(error);
+			console.log(`Failed to create new status embed '${embedId}':`);
+			console.error(error);
 		});
 	},
 };
