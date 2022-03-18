@@ -46,4 +46,11 @@ module.exports = {
 
 		return option;
 	},
+
+	// Check for given permission in current channel of the provided interaction
+	hasPermission(interaction, permission) {
+		const permissions = interaction.guild.me.permissionsIn(interaction.channel);
+
+		return permissions.has(permission);
+	},
 };

@@ -17,7 +17,7 @@ module.exports = {
 		const serverType = options.getString('server-type');
 
 		// Get attributes
-		const attributes = ServerUtils.getServerDataAttributes(serverType);
+		const attributes = ServerUtils.getServerDataTemplate(serverType);
 
 		// Create list
 		let message = `Attributes for \`${interaction.client.pingTypes.get(serverType).name}\` servers:`;
