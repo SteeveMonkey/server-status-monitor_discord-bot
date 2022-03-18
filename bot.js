@@ -24,23 +24,6 @@ client.on('interactionCreate', async interaction => {
 	const command = client.commands.get(interaction.commandName);
 	if (!command) return;
 
-	if (interaction.channel.type !== 'dm') {
-		try {
-			const permissions = interaction.guild.me.permissionsIn(interaction.channel);
-
-			// message.author.send(`My permissions in the \`${message.channel.name}\` channel on \`${message.guild.name}\` are as follows\n\`\`\`${permissions.serialize()}\`\`\``);
-
-			if (!permissions.has('SEND_MESSAGES')) {
-				interaction.author.send(`I am unable to send a message in the \`${interaction.channel.name}\` channel on \`${interaction.guild.name}\`\nPlease make sure I have permission to send messages in that channel`);
-				return;
-			}
-		}
-		catch (error) {
-			console.error(error);
-			interaction.author.send(`There was an error trying to determine permissions: \`${error.name}\` \`\`\`\n${error.message}\`\`\``);
-		}
-	}
-
 	try {
 		await command.execute(interaction);
 	}
