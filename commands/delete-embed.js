@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const ServerUtils = require('../server-utils.js');
+const CommandUtils = require('../command-utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,6 +15,16 @@ module.exports = {
 
 		// Handle args
 		const embedId = options.getString('embed-id');
+
+		// Check for permissions required to delete an embed message
+		if (!CommandUtils.hasPermission(interaction, 'VIEW_CHANNEL')) {
+			interaction.reply({ content: 'I do not seem to be able to access this channel\nPlease ensure I have permission to view this channel', ephemeral: true });
+			return;
+		}
+		else if (!CommandUtils.hasPermission(interaction, 'READ_MESSAGE_HISTORY')) {
+			interaction.reply({ content: 'I am unable to see the status embed in this channel\nPlease ensure I have permission to read message history in this channel', ephemeral: true });
+			return;
+		}
 
 		// Delete self-updating server status embed
 		ServerUtils.deleteStatusEmbed(interaction.client, embedId, interaction.guild.id, interaction.channel.id).then(messageContent => {
