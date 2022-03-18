@@ -35,51 +35,6 @@ function getEmbedMessage(client, embedData) {
 	});
 }
 
-function updateEmbedMessage(client, embedFile) {
-	return new Promise((resolve, reject) => {
-		const embedPath = `${embedDirectory}/${embedFile}`;
-		let embedData;
-		try {
-			embedData = JSON.parse(fs.readFileSync(embedPath));
-		}
-		catch (error) {
-			reject(error);
-		}
-
-		const serverData = embedData.serverData;
-		const server = client.pingTypes.get(serverData.type);
-
-		server.ping(serverData).then(pingData => {
-			const fileArray = [];
-			const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
-
-			statusEmbed.setTimestamp()
-				.setFooter({ text: 'Last updated' });
-
-			getEmbedMessage(client, embedData).then(message => {
-				message.edit({ embeds: [statusEmbed] }).then(() => {
-					resolve();
-				}).catch(error => {
-					reject(error);
-				});
-			}).catch(error => {
-				if (error.code == 10008) {
-					try {
-						deleteEmbedEntry(client, embedFile);
-					}
-					catch (fsError) {
-						reject(`Attempted to delete the status embed \`${embedFile}\` due to it's message no longer existing, but the operation failed: ${fsError}`);
-					}
-					reject(`The message from status embed \`${embedFile}\` no longer exists and it's corresponding entry has been removed`);
-				}
-				reject(error);
-			});
-		}).catch(error => {
-			reject(error);
-		});
-	});
-}
-
 // Deletes the file and entry in pingList of the provided embed file name
 function deleteEmbedEntry(client, embedFile) {
 	const embedPath = `${embedDirectory}/${embedFile}`;
@@ -221,7 +176,7 @@ class ServerUtils {
 	}
 
 	// Set embed data in self-updating server status embed
-	static setStatusEmbedData(client, embedId, guildId, channelId, newEmbedData) {
+	static setStatusEmbedData(embedId, guildId, channelId, newEmbedData) {
 		return new Promise((resolve, reject) => {
 			const embedFile = getEmbedFile(embedId, guildId, channelId);
 			const embedPath = `${embedDirectory}/${embedFile}`;
@@ -230,22 +185,53 @@ class ServerUtils {
 				fs.writeFileSync(embedPath, JSON.stringify(newEmbedData));
 			}
 			catch (error) {
-				reject(error);
+				reject(error, embedFile);
 			}
 
-			updateEmbedMessage(client, embedFile).then(() => {
-				resolve(embedFile);
-			}).catch(error => {
-				reject(error, embedFile);
-			});
+			resolve(embedFile);
 		});
 	}
 
 	// Update information in self-updating server status embed
 	static updateStatusEmbed(client, embedFile) {
 		return new Promise((resolve, reject) => {
-			updateEmbedMessage(client, embedFile).then(() => {
-				resolve(`Successfully updated status embed \`${embedFile}\``);
+			const embedPath = `${embedDirectory}/${embedFile}`;
+			let embedData;
+			try {
+				embedData = JSON.parse(fs.readFileSync(embedPath));
+			}
+			catch (error) {
+				reject(error);
+			}
+
+			const serverData = embedData.serverData;
+			const server = client.pingTypes.get(serverData.type);
+
+			server.ping(serverData).then(pingData => {
+				const fileArray = [];
+				const statusEmbed = server.startEmbed(serverData, pingData, fileArray);
+
+				statusEmbed.setTimestamp()
+					.setFooter({ text: 'Last updated' });
+
+				getEmbedMessage(client, embedData).then(message => {
+					message.edit({ embeds: [statusEmbed] }).then(() => {
+						resolve();
+					}).catch(error => {
+						reject(error);
+					});
+				}).catch(error => {
+					if (error.code == 10008) {
+						try {
+							deleteEmbedEntry(client, embedFile);
+						}
+						catch (fsError) {
+							reject(`Attempted to delete the status embed \`${embedFile}\` due to it's message no longer existing, but the operation failed: ${fsError}`);
+						}
+						reject(`The message from status embed \`${embedFile}\` no longer exists and it's corresponding entry has been removed`);
+					}
+					reject(error);
+				});
 			}).catch(error => {
 				reject(error);
 			});
