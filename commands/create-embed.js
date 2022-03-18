@@ -43,12 +43,35 @@ module.exports = {
 			serverData.port = options.getNumber('port');
 		}
 
+		// Check for permissions required to send an embed message
+		if (!CommandUtils.hasPermission(interaction, 'VIEW_CHANNEL')) {
+			interaction.reply({ content: 'I do not seem to be able to access this channel\nPlease ensure I have permission to view this channel', ephemeral: true });
+			return;
+		}
+		else if (!CommandUtils.hasPermission(interaction, 'SEND_MESSAGES')) {
+			interaction.reply({ content: 'I am unable to send a message in this channel\nPlease ensure I have permission to send messages in this channel', ephemeral: true });
+			return;
+		}
+		else if (!CommandUtils.hasPermission(interaction, 'EMBED_LINKS')) {
+			interaction.reply({ content: 'I am unable to send an embed message in this channel\nPlease ensure I have permission to embed links in this channel', ephemeral: true });
+			return;
+		}
+		else if (!CommandUtils.hasPermission(interaction, 'ATTACH_FILES')) {
+			interaction.reply({ content: 'I am unable to send an image in this channel\nPlease ensure I have permission to attach files in this channel', ephemeral: true });
+			return;
+		}
+
 		// Create self-updating server status embed
 		interaction.reply({ content: `Creating new self-updating status embed with the ID \`${embedId}\`...`, ephemeral: true });
 		ServerUtils.createStatusEmbed(interaction.client, embedId, serverData, function sendEmbed(statusEmbed, fileArray) {
 			return interaction.channel.send({ embeds: [statusEmbed], files: fileArray });
 		}).then(() => {
-			interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
+			if (CommandUtils.hasPermission(interaction, 'READ_MESSAGE_HISTORY')) {
+				interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
+			}
+			else {
+				interaction.editReply({ content: `I was able to successfully create the new self-updating status embed with the ID \`${embedId}\`, but I seem to be unable to access it\n**Please ensure I have permission to read message history in this channel, or I will not be able to keep the server status embeds in this channel up to date**` });
+			}
 		}).catch(error => {
 			interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
 			console.log(`Failed to create new status embed \`${embedId}\`:`);
