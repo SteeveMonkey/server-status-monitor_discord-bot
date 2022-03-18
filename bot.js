@@ -44,9 +44,11 @@ function continuouslyUpdateStatusEmbeds() {
 	}, config.pingInterval / client.pingList.size());
 
 	// Update the server status of the current Embed
-	ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(logMessage => {
+	const embedFile = client.pingList.get();
+
+	ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(() => {
 		if (config.verboseLogging) {
-			console.log(logMessage);
+			console.log(`Successfully updated status embed \`${embedFile}\``);
 		}
 	}).catch(error => {
 		console.error(error);
