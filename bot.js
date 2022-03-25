@@ -8,12 +8,12 @@ const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Disc
 client.commands = CommandUtils.getCommands();
 client.pingTypes = ServerUtils.getPingTypes();
 client.pingList = ServerUtils.getPingList();
+client.continueStatusEmbedUpdates = true;
 
 
 // Start
 client.once('ready', () => {
 	console.log('Ready!');
-	console.log('Started updating status embeds');
 	continuouslyUpdateStatusEmbeds();
 });
 
@@ -37,20 +37,22 @@ client.login(auth.token);
 
 
 // Continuously updates all of the status embeds in pingList
-function continuouslyUpdateStatusEmbeds() {
-	// Schedule the next status embed update
-	setTimeout(() => {
-		continuouslyUpdateStatusEmbeds();
-	}, config.pingInterval / client.pingList.size());
+async function continuouslyUpdateStatusEmbeds() {
+	console.log('Started updating status embeds');
 
-	// Update the server status of the current Embed
-	const embedFile = client.pingList.get();
+	while (client.continueStatusEmbedUpdates == true) {
+		// Update the server status of the current Embed
+		const embedFile = client.pingList.get();
 
-	ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(() => {
-		if (config.verboseLogging) {
-			console.log(`Successfully updated status embed \`${embedFile}\``);
-		}
-	}).catch(error => {
-		console.error(error);
-	});
+		ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(() => {
+			if (config.verboseLogging) {
+				console.log(`Successfully updated status embed \`${embedFile}\``);
+			}
+		}).catch(error => {
+			console.error(error);
+		});
+
+		// Wait before updating next status embed
+		await ServerUtils.sleepTimeout(config.pingInterval / client.pingList.size());
+	}
 }

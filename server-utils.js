@@ -43,6 +43,7 @@ function deleteEmbedEntry(client, embedFile) {
 	fs.rmSync(embedPath);
 }
 
+
 class ServerUtils {
 
 	// Return LoopedList of active embeds to regularly update
@@ -292,6 +293,13 @@ class ServerUtils {
 	// Returns true if the provided ID matches an existing entry for a self-updating server status embed
 	static isEmbedIdTaken(embedId, guildId, channelId) {
 		return fs.existsSync(`${embedDirectory}/${getEmbedFile(embedId, guildId, channelId)}`);
+	}
+
+	// Wait for given time in milliseconds then resolves promise
+	static sleepTimeout(ms) {
+		return new Promise(resolve => {
+			setTimeout(resolve, ms);
+		});
 	}
 }
 
