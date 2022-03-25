@@ -37,7 +37,7 @@ module.exports = {
 
 		// Check if attribute id is valid
 		if (!(attributeId in serverDataAttributes)) {
-			interaction.reply({ content: `Failed to change the attribute for the server status embed with the id \`${embedId}\` in this channel as the server ping type of \`${embedData.type}\` does not support using the attribute \`${attributeId}\``, ephemeral: true });
+			interaction.reply({ content: `Failed to change the attribute for the server status embed with the id \`${embedId}\` in this channel as the server ping type of \`${embedData.serverData.type}\` does not support using the attribute \`${attributeId}\``, ephemeral: true });
 			return;
 		}
 

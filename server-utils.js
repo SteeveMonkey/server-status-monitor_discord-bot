@@ -16,16 +16,17 @@ function getServerDataTemplatePath(serverType) {
 	return `${serverTypeDirectory}/${serverType}-data.json`;
 }
 
-// Returns promise containing status embed message obtained from provided embed data
+// Returns promise that resolves with status embed message obtained from provided embed data
 function getEmbedMessage(client, embedData) {
+	return getMessage(client, embedData.guildId, embedData.channelId, embedData.messageId);
+}
+
+// Returns promise that resolves with discord message obtained by the provided guild ID, channel ID, and message ID
+function getMessage(client, guildId, channelId, messageId) {
 	return new Promise((resolve, reject) => {
-		client.guilds.fetch(embedData.guildId).then(guild => {
-			guild.channels.fetch(embedData.channelId).then(channel => {
-				channel.messages.fetch(embedData.messageId).then(message => {
-					resolve(message);
-				}).catch(error => {
-					reject(error);
-				});
+		client.guilds.fetch(guildId).then(guild => {
+			getMessageFromGuild(guild, channelId, messageId).then(message => {
+				resolve(message);
 			}).catch(error => {
 				reject(error);
 			});
@@ -35,6 +36,26 @@ function getEmbedMessage(client, embedData) {
 	});
 }
 
+// Returns promise that resolves with discord message obtained by provided discord guild, channel ID, and message ID
+function getMessageFromGuild(guild, channelId, messageId) {
+	return new Promise((resolve, reject) => {
+		guild.channels.fetch(channelId).then(channel => {
+			getMessageFromChannel(channel, messageId).then(message => {
+				resolve(message);
+			}).catch(error => {
+				reject(error);
+			});
+		}).catch(error => {
+			reject(error);
+		});
+	});
+}
+
+// Returns promise that resolves with discord message obtained by provided discord channel and message ID
+function getMessageFromChannel(channel, messageId) {
+	return channel.messages.fetch(messageId);
+}
+
 // Deletes the file and entry in pingList of the provided embed file name
 function deleteEmbedEntry(client, embedFile) {
 	const embedPath = `${embedDirectory}/${embedFile}`;
@@ -42,6 +63,7 @@ function deleteEmbedEntry(client, embedFile) {
 	client.pingList.remove(embedFile);
 	fs.rmSync(embedPath);
 }
+
 
 class ServerUtils {
 
@@ -70,6 +92,20 @@ class ServerUtils {
 		return pingTypes;
 	}
 
+	// Returns Discord Collection containing the status embeds in the given channel
+	static getEmbedsInChannel(guildId, channelId) {
+		const embedList = new Discord.Collection();
+		const fileNameParts = getEmbedFile('*', guildId, channelId).split('*');
+		const embedFiles = fs.readdirSync(embedDirectory).filter(file => file.startsWith(fileNameParts[0])).filter(file => file.endsWith(fileNameParts[1]));
+
+		for (const file of embedFiles) {
+			const embedData = require(`${embedDirectory}/${file}`);
+			embedList.set(embedData.id, embedData);
+		}
+
+		return embedList;
+	}
+
 	// Returns an object containing a Discord.MessageAttachment and it's internal reference URL from provided image URI
 	static imageUriToAttachment(imageUri, imageName) {
 		let uriSplit = imageUri.split(',');
@@ -88,6 +124,16 @@ class ServerUtils {
 		else {
 			throw new Error('Expected an image URI for the first argument');
 		}
+	}
+
+	// Returns Discord message with the given guild ID, channel ID, and message ID
+	static getMessage(client, guildId, channelId, messageId) {
+		return getMessage(client, guildId, channelId, messageId);
+	}
+
+	// Returns Discord message from the given channel that has the given message ID
+	static getMessageFromChannel(channel, messageId) {
+		return getMessageFromChannel(channel, messageId);
 	}
 
 	// Passes server status as an embed message to the provided function
@@ -292,6 +338,13 @@ class ServerUtils {
 	// Returns true if the provided ID matches an existing entry for a self-updating server status embed
 	static isEmbedIdTaken(embedId, guildId, channelId) {
 		return fs.existsSync(`${embedDirectory}/${getEmbedFile(embedId, guildId, channelId)}`);
+	}
+
+	// Wait for given time in milliseconds then resolves promise
+	static sleepTimeout(ms) {
+		return new Promise(resolve => {
+			setTimeout(resolve, ms);
+		});
 	}
 }
 
