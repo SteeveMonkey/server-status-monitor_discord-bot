@@ -17,7 +17,6 @@ module.exports = {
 
 		// Run Command
 		const serverData = ServerUtils.getStatusEmbedData(embedId, interaction.guild.id, interaction.channel.id).serverData;
-		// const serverDataTemplate = ServerUtils.getServerDataTemplate(serverData.type);
 		let messageContent = `Attributes for embed \`${embedId}\` in this channel:`;
 
 		for (const attributeKey in serverData) {
