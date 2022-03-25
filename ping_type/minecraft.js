@@ -45,6 +45,10 @@ module.exports = {
 							reject(error);
 						}
 					});
+
+					pingResponse.on('error', function(error) {
+						reject(error);
+					});
 				});
 
 				pingRequest.end();
