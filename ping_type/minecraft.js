@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const ServerUtils = require('../server-utils');
 const https = require('https');
+https.globalAgent.keepAlive = true;
 
 module.exports = {
 	value: 'minecraft',
@@ -49,6 +50,10 @@ module.exports = {
 					pingResponse.on('error', function(error) {
 						reject(error);
 					});
+				});
+
+				pingRequest.on('error', function(error) {
+					reject(error);
 				});
 
 				pingRequest.end();
