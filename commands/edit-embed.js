@@ -15,10 +15,12 @@ module.exports = {
 		// Handle args
 		const embedId = options.getString('embed-id');
 
+		// Run command
 		const embedData = ServerUtils.getStatusEmbedData(embedId, interaction.guild.id, interaction.channel.id);
 
-		// Edit self-updating server status embed
 		// TODO: Present user with embed editor
+
+
 		interaction.reply({ content: 'WIP', ephemeral: true });
 	},
 };
