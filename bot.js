@@ -49,6 +49,9 @@ async function continuouslyUpdateStatusEmbeds() {
 				console.log(`Successfully updated status embed \`${embedFile}\``);
 			}
 		}).catch(error => {
+			if (config.verboseLogging) {
+				console.log(`Failed to update status embed \`${embedFile}\``);
+			}
 			console.error(error);
 		});
 
