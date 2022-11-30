@@ -44,7 +44,7 @@ async function continuouslyUpdateStatusEmbeds() {
 		// Update the server status of the current Embed
 		const embedFile = client.pingList.get();
 
-		ServerUtils.updateStatusEmbed(client, client.pingList.get()).then(() => {
+		ServerUtils.updateStatusEmbed(client, embedFile).then(() => {
 			if (config.verboseLogging) {
 				console.log(`Successfully updated status embed \`${embedFile}\``);
 			}
