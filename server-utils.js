@@ -267,7 +267,8 @@ class ServerUtils {
 						reject(error);
 					});
 				}).catch(error => {
-					if (error.code == 10008) {
+					// If message that contains the embed no longer exists, delete the embed entry
+					if (error.code == 10003 || error.code == 10004 || error.code == 10008) {
 						try {
 							deleteEmbedEntry(client, embedFile);
 						}

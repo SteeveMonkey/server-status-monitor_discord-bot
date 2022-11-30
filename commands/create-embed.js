@@ -62,19 +62,22 @@ module.exports = {
 		}
 
 		// Create self-updating server status embed
-		interaction.reply({ content: `Creating new self-updating status embed with the ID \`${embedId}\`...`, ephemeral: true });
-		ServerUtils.createStatusEmbed(interaction.client, embedId, serverData, function sendEmbed(statusEmbed, fileArray) {
-			return interaction.channel.send({ embeds: [statusEmbed], files: fileArray });
-		}).then(() => {
-			if (CommandUtils.hasPermission(interaction, 'READ_MESSAGE_HISTORY')) {
-				interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
-			}
-			else {
-				interaction.editReply({ content: `I was able to successfully create the new self-updating status embed with the ID \`${embedId}\`, but I seem to be unable to access it\n**Please ensure I have permission to read message history in this channel, or I will not be able to keep the server status embeds in this channel up to date**` });
-			}
+		interaction.reply({ content: `Creating new self-updating status embed with the ID \`${embedId}\`...`, ephemeral: true }).then(() => {
+			ServerUtils.createStatusEmbed(interaction.client, embedId, serverData, function sendEmbed(statusEmbed, fileArray) {
+				return interaction.channel.send({ embeds: [statusEmbed], files: fileArray });
+			}).then(() => {
+				if (CommandUtils.hasPermission(interaction, 'READ_MESSAGE_HISTORY')) {
+					interaction.editReply({ content: `Successfully created new self-updating status embed with the ID \`${embedId}\``, ephemeral: true });
+				}
+				else {
+					interaction.editReply({ content: `I was able to successfully create the new self-updating status embed with the ID \`${embedId}\`, but I seem to be unable to access it\n**Please ensure I have permission to read message history in this channel, or I will not be able to keep the server status embeds in this channel up to date**` });
+				}
+			}).catch(error => {
+				interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
+				console.log(`Failed to create new status embed '${embedId}':`);
+				console.error(error);
+			});
 		}).catch(error => {
-			interaction.editReply({ content: `Failed to create new status embed \`${embedId}\`:\n\`\`\`${error}\`\`\``, ephemeral: true });
-			console.log(`Failed to create new status embed '${embedId}':`);
 			console.error(error);
 		});
 	},

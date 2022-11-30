@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const ServerUtils = require('../server-utils');
-const https = require('https');
+const minecraftServerUtil = require('minecraft-server-util');
 
 module.exports = {
 	value: 'minecraft',
@@ -8,54 +8,20 @@ module.exports = {
 	description: 'Used for Minecraft Java Edition servers. Can display Bedrock connection info for servers that also accept Bedrock clients',
 
 	ping(serverData) {
-		return new Promise((resolve, reject) => {
-			try {
-				let path = `/server/status?ip=${serverData.address}`;
-				if (serverData.port) {
-					path += `&port=${serverData.port}`;
-				}
+		return new Promise((resolve) => {
+			minecraftServerUtil.status(serverData.address, serverData.port).then(pingData => {
+				pingData.online = true;
+				pingData.motd = pingData.motd.clean;
 
-				const pingOptions = {
-					'method': 'GET',
-					'hostname': 'mcapi.us',
-					'port': null,
-					'path': path,
-					'headers': {},
+				resolve(pingData);
+			}).catch(error => {
+				const pingData = {
+					online: false,
+					error: error,
 				};
 
-				const pingRequest = https.request(pingOptions, function(pingResponse) {
-					const chunks = [];
-
-					pingResponse.on('data', function(chunk) {
-						try {
-							chunks.push(chunk);
-						}
-						catch (error) {
-							reject(error);
-						}
-					});
-
-					pingResponse.on('end', function() {
-						try {
-							const buffer = Buffer.concat(chunks);
-							const pingData = JSON.parse(buffer);
-							resolve(pingData);
-						}
-						catch (error) {
-							reject(error);
-						}
-					});
-
-					pingResponse.on('error', function(error) {
-						reject(error);
-					});
-				});
-
-				pingRequest.end();
-			}
-			catch (error) {
-				reject(error);
-			}
+				resolve(pingData);
+			});
 		});
 	},
 
@@ -88,11 +54,9 @@ module.exports = {
 		// Server MOTD
 		let motd = '';
 		if (serverData.description) {
-			// statusEmbed.setDescription(`${serverData.description}\n\u200B`);
 			motd += serverData.description;
 		}
 		else if (pingData.motd) {
-			// statusEmbed.setDescription(`${pingData.motd}\n\u200B`);
 			motd += pingData.motd;
 		}
 
@@ -120,8 +84,8 @@ module.exports = {
 			if (serverData.version) {
 				version = serverData.version;
 			}
-			else if (pingData.status == 'success') {
-				version = pingData.server.name;
+			else if (pingData.online) {
+				version = pingData.version.name;
 			}
 			else {
 				version = '?';
@@ -171,18 +135,11 @@ module.exports = {
 		}
 
 		// Server Status
-		if (pingData.status != 'success') {
-			statusEmbed.setColor('#888888')
-				.addField(
-					'\u200B',
-					`**Failed to ping server** \u2014 ping status \`${pingData.status}\`: \`\`\`\n${pingData.error}\`\`\``,
-				);
-		}
-		else if (pingData.online) {
+		if (pingData.online) {
 			statusEmbed.setColor('#66ff00')
 				.addField(
 					'\u200B',
-					`**ONLINE** \u2014 ${pingData.players.now}/${pingData.players.max} players`,
+					`**ONLINE** \u2014 ${pingData.players.online}/${pingData.players.max} players`,
 				);
 		}
 		else {

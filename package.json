@@ -114,7 +114,8 @@
     "discord-api-types": "^0.27.2",
     "discord.js": "^13.6.0",
     "eris": "^0.16.1",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "minecraft-server-util": "^5.3.1"
   },
   "devDependencies": {
     "eslint": "^8.9.0"
