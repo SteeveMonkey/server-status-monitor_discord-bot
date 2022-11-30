@@ -4,7 +4,7 @@ const ServerUtils = require('../server-utils.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('status-test')
-		.setDescription('Displays the status of a harcoded server'),
+		.setDescription('Displays the status of a hardcoded server'),
 	execute(interaction) {
 		const serverData = {
 			type: 'minecraft',

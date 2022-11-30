@@ -65,7 +65,7 @@
 	},
 	"address": {
 		"name": "Server Address",
-		"description": "The ip address used to ping the server\n_This cannot be left blank and the port must be exluded_\n_Only Java Edition servers are supported_",
+		"description": "The ip address used to ping the server\n_This cannot be left blank and the port must be excluded_\n_Only Java Edition servers are supported_",
 		"valueType": "ip",
 		"defaultValue": null
 	},

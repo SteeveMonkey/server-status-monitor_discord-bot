@@ -4,7 +4,7 @@ const { SlashCommandStringOption } = require('@discordjs/builders');
 const ServerUtils = require('./server-utils');
 
 module.exports = {
-	// Returns Discord Collection caontaining all of the command available
+	// Returns Discord Collection containing all of the command available
 	getCommands() {
 		const commands = new Discord.Collection();
 		const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));

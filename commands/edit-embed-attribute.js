@@ -54,7 +54,7 @@ module.exports = {
 
 			ServerUtils.updateStatusEmbed(interaction.client, embedFile).then(() => {
 				console.log(`Successfully set new data in status embed \`${embedFile}\``);
-				interaction.reply({ content: `Succesfully set the attribute \`${attributeId}\` to \`${newValue}\` for the status embed with the id \`${embedId}\` in this channel`, ephemeral: true });
+				interaction.reply({ content: `Successfully set the attribute \`${attributeId}\` to \`${newValue}\` for the status embed with the id \`${embedId}\` in this channel`, ephemeral: true });
 			}).catch(error => {
 				interaction.reply({ content: `${errorMessage}:\n\`\`\`${error}\`\`\``, ephemeral: true });
 				console.error(`Failed to update status embed \`${embedFile}\`:\n${error}`);
