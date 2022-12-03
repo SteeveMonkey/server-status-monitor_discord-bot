@@ -13,4 +13,4 @@ node_modules/
 embed-list/
 
 # Miscellaneous
-*.ignore
+*.ignore*
