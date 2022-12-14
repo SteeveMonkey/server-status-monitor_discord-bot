@@ -9,7 +9,10 @@ module.exports = {
 
 	ping(serverData) {
 		return new Promise((resolve) => {
-			minecraftServerUtil.status(serverData.address, serverData.port).then(pingData => {
+			minecraftServerUtil.status(
+				serverData.address,
+				((serverData.port == null) ? 25565 : serverData.port),
+			).then(pingData => {
 				pingData.online = true;
 				pingData.motd = pingData.motd.clean;
 
