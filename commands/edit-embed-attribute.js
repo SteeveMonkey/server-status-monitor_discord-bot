@@ -36,7 +36,10 @@ module.exports = {
 			return;
 		}
 
-		const newValue = options.getString('value');
+		const newValue = ((attributeId == 'port') ?
+			parseInt(options.getString('value')) :
+			options.getString('value')
+		);
 
 
 		// Edit self-updating server status embed
