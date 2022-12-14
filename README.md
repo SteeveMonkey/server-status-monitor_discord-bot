@@ -68,6 +68,8 @@
 
 <!-- TODO: About The Project -->
 
+[![Server Status Monitor Screen Shot][product-screenshot]](https://example.com)
+
 The Server Status Monitor Discord Bot displays the status of video game servers in Discord channels using message embeds. These server status embeds are regularly updated with the current status of the game servers, and can be configured to show as much, or as little, information as desired. Status embeds also have additional fields that can be filled in to provide extra info about the game server, such as a description, website, or the mods needed to join.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
